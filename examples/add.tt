@@ -2,11 +2,11 @@
 # This program should output '150'
 
 FUNC main() {
-  INT A;
-  INT B;
-  INT C;
-  A = 100;
-  B = 50;
-  C = A + B;
-  PRINT(C);
+  INT A!
+  INT B!
+  INT C!
+  A = 100!
+  B = 50!
+  C = A + B!
+  PRINT(C)!
 }
