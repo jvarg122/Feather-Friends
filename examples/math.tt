@@ -1,36 +1,36 @@
-# A simple program which shows mathematical operations.
+# A SIMPLE PROGRAM WHICH SHOWS MATHEMATICAL OPERATIONS.
 
-func main() {
-  int a;
-  int b;
-  int c;
+FUNC MAIN()! {
+  INT A!
+  INT B!
+  INT C;
 
-  a = 100;
-  b = 50;
+  A = 100!
+  B = 50!
 
-  # This should output '150'
-  c = a + b;
-  print(c);
+  # THIS SHOULD OUTPUT '150'
+  C = A + B!
+  PRINT(C)!
 
-  # This should output '50'
-  c = a - b;
-  print(c);
+  # THIS SHOULD OUTPUT '50'
+  C = A - B!
+  PRINT(C)!
 
-  # This should output '5000'
-  c = a * b;
-  print(c);
+  # THIS SHOULD OUTPUT '5000'
+  C = A * B!
+  PRINT(C)!
 
-  # This should output '2'
-  c = a / b;
-  print(c);
+  # THIS SHOULD OUTPUT '2'
+  C = A / B!
+  PRINT(C)!
 
-  # This should output '0'
-  c = a % b;
-  print(c);
+  # THIS SHOULD OUTPUT '0'
+  C = A % B!
+  PRINT(C)!
 
-  # Complex Expression. (4 + 2) * 7
-  a = 4;
-  b = 7;
-  c = (a + 2) * b;
-  print(c);
+  # COMPLEX EXPRESSION. (4 + 2) * 7
+  A = 4!
+  B = 7!
+  C = (A + 2) * B!
+  PRINT(C)!
 }
