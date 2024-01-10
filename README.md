@@ -6,37 +6,37 @@
 
 | Language Feature      | Code Example |
 |-----------------------|--------------|
-| Variable Declaration  | int x;       |
-| Add                   | x + y        |
-| Sub                   | x - y        |
-| Multiply              | x * y        |
-| Divide                | x / y        |
-| Modulus               | x % y        |
-| Less Than             | x < y        |
-| Less Than Equal       | x <= y       |
-| Equality              | x == y       |
-| Not Equality          | x != y       |
-| Greater Than          | x > y        |
-| Greater Than Equal    | x >= y       |
-| Write                 | print(x)     |
-| Read                  | read(x)      |
-| Arrays                | int [8] array|
-| Comments              | # This is a comment|
+| Variable Declaration  | INT X;       |
+| Add                   | X + Y        |
+| Sub                   | X - Y        |
+| Multiply              | X * Y        |
+| Divide                | X / Y        |
+| Modulus               | X % Y        |
+| Less Than             | X < y        |
+| Less Than Equal       | X <= Y       |
+| Equality              | X == Y       |
+| Not Equality          | X != Y       |
+| Greater Than          | X > Y        |
+| Greater Than Equal    | X >= Y       |
+| Write                 | PRINT(X)     |
+| Read                  | READ(X)      |
+| Arrays                | INT [8] ARRAY|
+| Comments              | # THIS IS A COMMENT|
 
 ### Table of Symbols
 
 |Symbol                | Token Name   |
 |----------------------|--------------|
-|func                  | Func         |
-|return                | Return       |
-|int                   | Int          |
-|print                 | Print        |
-|read                  | Read         |
-|while                 | While        |
-|if                    | If           |
-|else                  | Else         |
-|break                 | Break        |
-|continue              | Continue     |
+|FUNC FUNCTION_NAME()! | Func         |
+|RETURN                | Return       |
+|INT                   | Int          |
+|PRINT                 | Print        |
+|READ                  | Read         |
+|WHILE                 | While        |
+|IF                    | If           |
+|ELSE                  | Else         |
+|BREAK                 | Break        |
+|CONTINUE              | Continue     |
 |(                     | LeftParen    |
 |)                     | RightParen   |
 |{                     | LeftCurly    |
@@ -44,7 +44,7 @@
 |[                     | LeftBracket  |
 |]                     | RightBracket |
 |,                     | Comma        |
-|;                     | Semicolon    |
+|!                     | Semicolon    |
 |+                     | Plus         |
 |-                     | Subtract     |
 |*                     | Multiply     |
@@ -57,7 +57,7 @@
 |>=                    | GreaterEqual |
 |==                    | Equality     |
 |!=                    | NotEqual     |
-|variable_name         | Ident        |
+|VARIABLE_NAME         | Ident        |
 |10311517              | Num          |
 
 ### Comments
