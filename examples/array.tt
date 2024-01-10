@@ -1,16 +1,16 @@
-func main() {
-    int [4] array;
+FUNC MAIN()! {
+    INT [4] ARRAY!
 
-    # Should print out '2'
-    array[0] = 2;
-    print(array[0]);
+    # SHOULD PRINT OUT '2'
+    ARRAY[0] = 2!
+    PRINT(ARRAY[0])!
 
-    # Should print out '4'
-    array[1] = array[0] + array[0];
-    print(array[1]);
+    # SHOULD PRINT OUT '4'
+    ARRAY[1] = ARRAY[0] + ARRAY[0]!
+    PRINT(ARRAY[1])!
 
-    # Should print out '8'
-    array[2] = array[1] + 2 * 2;
-    print(array[2]);
+    # SHOULD PRINT OUT '8'
+    ARRAY[2] = ARRAY[1] + 2 * 2!
+    PRINT(ARRAY[2])!
 
 }
