@@ -1,8 +1,8 @@
-func main() {
-    int i;
-    i = 0;
-    while i < 10 {
-        print(i);
-        i = i + 1;
+FUNC MAIN()! {
+    INT I!
+    I = 0!
+    WHILE I < 10 {
+        PRINT(I)!
+        I = I + 1!
     }
 }
