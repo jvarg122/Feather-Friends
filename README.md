@@ -1,6 +1,6 @@
-# Teh Tarik Programming Language
+# SHOUT! Programming Language
 
-**Author(s):** John Newton, Michael Faraday, Tunku Abdul Rahman
+**Author(s):** Dalton Witt, Josue Vargas, Alejandro Vargas
 
 ### Language Features
 
