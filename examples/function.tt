@@ -1,16 +1,16 @@
-func add(int a, int b) {
-    return a + b;
+FUNC ADD(INT A, INT B)! {
+    RETURN A + B!
 }
 
-func mul(int a, int b) {
-     return a * b;
+FUNC MUL(INT A, INT B)! {
+     RETURN A * B!
 }
 
-func main() {
-    int a;
-    int b;
-    a = add(10, 2);
-    print(a);
-    b = mul(a, a + b);
-    print(b);
+FUNC MAIN()! {
+    INT A!
+    INT B!
+    A = ADD(10, 2)!
+    PRINT(A)!
+    B = MUL(A, A + B)!
+    PRINT(B)!
 }
