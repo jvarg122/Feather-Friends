@@ -1,4 +1,4 @@
-# SHOUT! Programming Language
+# Feather Friends Programming Language
 
 **Author(s):** Dalton Witt, Josue Vargas, Alejandro Vargas
 
@@ -6,37 +6,37 @@
 
 | Language Feature      | Code Example |
 |-----------------------|--------------|
-| Variable Declaration  | INT X;       |
-| Add                   | X + Y        |
-| Sub                   | X - Y        |
-| Multiply              | X * Y        |
-| Divide                | X / Y        |
-| Modulus               | X % Y        |
-| Less Than             | X < y        |
-| Less Than Equal       | X <= Y       |
-| Equality              | X == Y       |
-| Not Equality          | X != Y       |
-| Greater Than          | X > Y        |
-| Greater Than Equal    | X >= Y       |
-| Write                 | PRINT(X)     |
-| Read                  | READ(X)      |
-| Arrays                | INT [8] ARRAY|
-| Comments              | # THIS IS A COMMENT|
+| Variable Declaration  | egg x;       |
+| Add                   | x + y        |
+| Sub                   | x - y        |
+| Multiply              | x * y        |
+| Divide                | x / y        |
+| Modulus               | x % y        |
+| Less Than             | x < y        |
+| Less Than Equal       | x <= y       |
+| Equality              | x == y       |
+| Not Equality          | x != y       |
+| Greater Than          | x > y        |
+| Greater Than Equal    | x >= y       |
+| Write                 | squawk(x)    |
+| Read                  | survey(x)    |
+| Arrays                | egg [8] array|
+| Comments              | \/ This is a comment|
 
 ### Table of Symbols
 
 |Symbol                | Token Name   |
 |----------------------|--------------|
-|FUNC FUNCTION_NAME()! | Func         |
-|RETURN                | Return       |
-|INT                   | Int          |
-|PRINT                 | Print        |
-|READ                  | Read         |
-|WHILE                 | While        |
-|IF                    | If           |
-|ELSE                  | Else         |
-|BREAK                 | Break        |
-|CONTINUE              | Continue     |
+|chirp                 | Func         |
+|migrate               | Return       |
+|egg                   | Int          |
+|squawk                | Print        |
+|survey                | Read         |
+|nest                  | While        |
+|fly                   | If           |
+|land                  | Else         |
+|roast                 | Break        |
+|soar                  | Continue     |
 |(                     | LeftParen    |
 |)                     | RightParen   |
 |{                     | LeftCurly    |
@@ -44,7 +44,7 @@
 |[                     | LeftBracket  |
 |]                     | RightBracket |
 |,                     | Comma        |
-|!                     | Semicolon    |
+|;                     | Semicolon    |
 |+                     | Plus         |
 |-                     | Subtract     |
 |*                     | Multiply     |
@@ -57,15 +57,15 @@
 |>=                    | GreaterEqual |
 |==                    | Equality     |
 |!=                    | NotEqual     |
-|VARIABLE_NAME         | Ident        |
-|10311517              | Num          |
+|variable_name         | Ident        |
+|123456789             | Num          |
 
 ### Comments
 
-Comments can be single line comments starting with `#`. For example:
+Comments can be single line comments starting with `\/`. For example:
 
 ```
-int x; #This is a variable declaration.
+egg x; \/ This is a variable declaration.
 ```
 
 
