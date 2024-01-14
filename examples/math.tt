@@ -1,36 +1,36 @@
-# A SIMPLE PROGRAM WHICH SHOWS MATHEMATICAL OPERATIONS.
+# A simple program which shows mathematical operations.
 
-FUNC MAIN()! {
-  INT A!
-  INT B!
-  INT C;
+chirp main() {
+  egg a;
+  egg b;
+  egg c;
 
-  A = 100!
-  B = 50!
+  a = 100;
+  b = 50;
 
-  # THIS SHOULD OUTPUT '150'
-  C = A + B!
-  PRINT(C)!
+  # This should output '150'
+  c = a + b;
+  squawk(c);
 
-  # THIS SHOULD OUTPUT '50'
-  C = A - B!
-  PRINT(C)!
+  # This should output '50'
+  c = a - b;
+  squawk(c);
 
-  # THIS SHOULD OUTPUT '5000'
-  C = A * B!
-  PRINT(C)!
+  # This should output '5000'
+  c = a * b;
+  squawk(c);
 
-  # THIS SHOULD OUTPUT '2'
-  C = A / B!
-  PRINT(C)!
+  # This should output '2'
+  c = a / b;
+  squawk(c);
 
-  # THIS SHOULD OUTPUT '0'
-  C = A % B!
-  PRINT(C)!
+  # This should output '0'
+  c = a % b;
+  squawk(c);
 
-  # COMPLEX EXPRESSION. (4 + 2) * 7
-  A = 4!
-  B = 7!
-  C = (A + 2) * B!
-  PRINT(C)!
+  # Complex Expression. (4 + 2) * 7
+  a = 4;
+  b = 7;
+  c = (a + 2) * b;
+  squawk(c);
 }
