@@ -1,16 +1,16 @@
-FUNC ADD(INT A, INT B)! {
-    RETURN A + B!
+chirp add(egg a, egg b) {
+    migrate a + b;
 }
 
-FUNC MUL(INT A, INT B)! {
-     RETURN A * B!
+chirp mul(egg a, egg b) {
+    migrate a * b;
 }
 
-FUNC MAIN()! {
-    INT A!
-    INT B!
-    A = ADD(10, 2)!
-    PRINT(A)!
-    B = MUL(A, A + B)!
-    PRINT(B)!
+chirp main() {
+    egg a;
+    egg b;
+    a = add(10, 2);
+    squawk(a);
+    b = mul(a, a + b);
+    squawk(b);
 }
