@@ -21,7 +21,7 @@
 | Write                 | squawk(x)    |
 | Read                  | survey(x)    |
 | Arrays                | egg [8] array|
-| Comments              | \/ This is a comment|
+| Comments              | \\\/ This is a comment|
 
 ### Table of Symbols
 
