@@ -1,11 +1,11 @@
-FUNC main() {
-    INT I!
-    I = 0!
-    WHILE I < 10 {
-        IF I >= 4 {
-            BREAK!
-        }
-        PRINT(I)!
-        I = I + 1!
+chirp main() {
+  egg i;
+  i = 0;
+  nest i < 10 {
+    fly i >= 4 {
+      roast;
     }
+    squawk(i);
+    i = i + 1;
+  }
 }
