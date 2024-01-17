@@ -8,16 +8,16 @@ COMMENT [#].*\n
 
 %%
 
-"func"                      {printf("chirp\n");}
-"return"                    {printf("migrate\n");}
-"int"                       {printf("egg\n");}
-"print"                     {printf("squawk\n");}
-"read"                      {printf("survey\n");}
-"while"                     {printf("nest\n");}
-"if"                        {printf("fly\n");}
-"else"                      {printf("land\n");}
-"break"                     {printf("roast\n");}
-"continue"                  {printf("soar\n");}
+"chirp"                     {printf("FUNC\n");}
+"migrate"                   {printf("RETURN\n");}
+"egg"                       {printf("INT\n");}
+"squawk"                    {printf("PRINT\n");}
+"survey"                    {printf("READ\n");}
+"nest"                      {printf("WHILE\n");}
+"fly"                       {printf("IF\n");}
+"land"                      {printf("ELSE\n");}
+"roast"                     {printf("BREAK\n");}
+"soar"                      {printf("continue\n");}
 
 "("                         {printf("LEFTPAREN\n");}
 ")"                         {printf("RIGHTPAREN\n");}
