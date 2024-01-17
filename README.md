@@ -1,6 +1,6 @@
 # Feather Friends Programming Language
 
-**Author(s):** Dalton Witt, Josue Vargas, Alejandro Vargas
+**Author(s):** Dalton Witt, Josue Vargas, Alejandro Vargas, Jenhua Chang
 
 ### Language Features
 
