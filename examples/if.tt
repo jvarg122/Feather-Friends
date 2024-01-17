@@ -1,30 +1,30 @@
-func main() {
-    int a;
-    int b;
-    int c;
+chirp main() {
+    egg a;
+    egg b;
+    egg c;
 
     
     a = 100;
     b = 50;
-    if a < b {
+    fly a < b {
         c = 0;
-    } else {
+    } land {
         c = 1;
     }
 
     # Should print out '1'.
-    print(c);
+    squawk(c);
 
 
 
     a = 100;
     b = 50;
-    if a >= b {
+    fly a >= b {
         c = 0;
-    } else {
+    } land {
         c = 1;
     }
 
     # Should print out '0'
-    print(c);
+    squawk(c);
 }

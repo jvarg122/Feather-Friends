@@ -1,11 +1,11 @@
-func main() {
-    int i;
-    i = 0;
-    while i < 10 {
-        if i >= 4 {
-            break;
-        }
-        print(i);
-        i = i + 1;
+chirp main() {
+  egg i;
+  i = 0;
+  nest i < 10 {
+    fly i >= 4 {
+      roast;
     }
+    squawk(i);
+    i = i + 1;
+  }
 }

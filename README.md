@@ -1,12 +1,12 @@
-# Teh Tarik Programming Language
+# Feather Friends Programming Language
 
-**Author(s):** John Newton, Michael Faraday, Tunku Abdul Rahman
+**Author(s):** Dalton Witt, Josue Vargas, Alejandro Vargas, Jenhua Chang
 
 ### Language Features
 
 | Language Feature      | Code Example |
 |-----------------------|--------------|
-| Variable Declaration  | int x;       |
+| Variable Declaration  | egg x;       |
 | Add                   | x + y        |
 | Sub                   | x - y        |
 | Multiply              | x * y        |
@@ -18,25 +18,25 @@
 | Not Equality          | x != y       |
 | Greater Than          | x > y        |
 | Greater Than Equal    | x >= y       |
-| Write                 | print(x)     |
-| Read                  | read(x)      |
-| Arrays                | int [8] array|
-| Comments              | # This is a comment|
+| Write                 | squawk(x)    |
+| Read                  | survey(x)    |
+| Arrays                | egg [8] array|
+| Comments              | \\\/ This is a comment|
 
 ### Table of Symbols
 
 |Symbol                | Token Name   |
 |----------------------|--------------|
-|func                  | Func         |
-|return                | Return       |
-|int                   | Int          |
-|print                 | Print        |
-|read                  | Read         |
-|while                 | While        |
-|if                    | If           |
-|else                  | Else         |
-|break                 | Break        |
-|continue              | Continue     |
+|chirp                 | Func         |
+|migrate               | Return       |
+|egg                   | Int          |
+|squawk                | Print        |
+|survey                | Read         |
+|nest                  | While        |
+|fly                   | If           |
+|land                  | Else         |
+|roast                 | Break        |
+|soar                  | Continue     |
 |(                     | LeftParen    |
 |)                     | RightParen   |
 |{                     | LeftCurly    |
@@ -58,14 +58,14 @@
 |==                    | Equality     |
 |!=                    | NotEqual     |
 |variable_name         | Ident        |
-|10311517              | Num          |
+|123456789             | Num          |
 
 ### Comments
 
-Comments can be single line comments starting with `#`. For example:
+Comments can be single line comments starting with `\/`. For example:
 
 ```
-int x; #This is a variable declaration.
+egg x; \/ This is a variable declaration.
 ```
 
 
