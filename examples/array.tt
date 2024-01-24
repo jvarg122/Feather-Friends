@@ -1,15 +1,15 @@
 chirp main() {
   egg[4] array;
 
-  vv Should print out '2'
+  V Should print out '2'
   array[0] = 2;
   squawk(array[0]);
 
-  vv Should print out '4'
+  V Should print out '4'
   array[1] = array[0] + array[0];
   squawk(array[1]);
 
-  vv Should print out '8'
+  V Should print out '8'
   array[2] = array[1] + 2 * 2;
   squawk(array[2]);
 }

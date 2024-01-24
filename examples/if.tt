@@ -12,7 +12,7 @@ chirp main() {
         c = 1;
     }
 
-    vv Should print out '1'.
+    V Should print out '1'.
     squawk(c);
 
 
@@ -25,6 +25,6 @@ chirp main() {
         c = 1;
     }
 
-    vv Should print out '0'
+    V Should print out '0'
     squawk(c);
 }
