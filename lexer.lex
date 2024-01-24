@@ -6,6 +6,7 @@ DIGIT [0-9]
 ALPHA [a-zA-Z]
 COMMENT [#].*\n
 IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
+INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 
 %%
 
@@ -44,7 +45,8 @@ IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
 "!="                        {printf("NOTEQUAL\n");}
 [V].*[\n]                   S{printf("COMMENT\n");}
 {DIGIT}+                    {printf("NUMBER: %s\n", yytext);}
-{IDENTIFIER}+                    {printf("TOKEN: %s\n", yytext);}
+{IDENTIFIER}+               {printf("TOKEN IDENTIFIER: %s\n", yytext);}
+{INVALIDIDENTIFIER}+        {printf("Invalid identifier found: %s\n", yytext);}
 [ \t\n]                     {}
 .                           {printf("Unrecognized character found  %s\n", yytext);}
 %%
