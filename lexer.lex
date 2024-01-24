@@ -41,7 +41,7 @@ COMMENT [#].*\n
 ">="                        {printf("GREATEREQUAL\n");}
 "=="                        {printf("EQUALITY\n");}
 "!="                        {printf("NOTEQUAL\n");}
-"V".*[\n]                   S{printf("COMMENT\n");}
+[V].*[\n]                   S{printf("COMMENT\n");}
 {DIGIT}+                    {printf("NUMBER: %s\n", yytext);}
 {ALPHA}+                    {printf("TOKEN: %s\n", yytext);}
 [ \t\n]                     {}
