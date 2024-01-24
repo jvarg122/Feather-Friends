@@ -44,7 +44,7 @@ COMMENT [#].*\n
 {ALPHA}+                    {printf("TOKEN: %s\n", yytext);}
 {COMMENT}                   {}
 [ \t\n]                     {}
-.                           {}
+.                           {printf("Unrecognized character found  %s\n", yytext);}
 %%
 
 int main(void) {

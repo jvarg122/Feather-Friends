@@ -954,7 +954,7 @@ YY_RULE_SETUP
 case 36:
 YY_RULE_SETUP
 #line 47 "lexer.lex"
-{}
+{printf("Unrecognized character found  %s\n", yytext);}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
