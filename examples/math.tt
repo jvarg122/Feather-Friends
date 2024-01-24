@@ -1,4 +1,4 @@
-# A simple program which shows mathematical operations.
+vv A simple program which shows mathematical operations.
 
 chirp main() {
   egg a;
@@ -8,27 +8,27 @@ chirp main() {
   a = 100;
   b = 50;
 
-  # This should output '150'
+  vv This should output '150'
   c = a + b;
   squawk(c);
 
-  # This should output '50'
+  vv This should output '50'
   c = a - b;
   squawk(c);
 
-  # This should output '5000'
+  vv This should output '5000'
   c = a * b;
   squawk(c);
 
-  # This should output '2'
+  vv This should output '2'
   c = a / b;
   squawk(c);
 
-  # This should output '0'
+  vv This should output '0'
   c = a % b;
   squawk(c);
 
-  # Complex Expression. (4 + 2) * 7
+  vv Complex Expression. (4 + 2) * 7
   a = 4;
   b = 7;
   c = (a + 2) * b;
