@@ -13,11 +13,13 @@ COMMENT [#].*\n
 "egg"                       {printf("INT\n");}
 "squawk"                    {printf("PRINT\n");}
 "survey"                    {printf("READ\n");}
+"peck"                      {printf("WRITE\n");}
 "nest"                      {printf("WHILE\n");}
 "fly"                       {printf("IF\n");}
 "land"                      {printf("ELSE\n");}
 "roast"                     {printf("BREAK\n");}
-"soar"                      {printf("continue\n");}
+"soar"                      {printf("CONTINUE\n");}
+
 
 "("                         {printf("LEFTPAREN\n");}
 ")"                         {printf("RIGHTPAREN\n");}
@@ -39,10 +41,9 @@ COMMENT [#].*\n
 ">="                        {printf("GREATEREQUAL\n");}
 "=="                        {printf("EQUALITY\n");}
 "!="                        {printf("NOTEQUAL\n");}
-"{comment}"                 {printf("V*\n");}
+"V.*$"                      {printf("COMMENT\n");}
 {DIGIT}+                    {printf("NUMBER: %s\n", yytext);}
 {ALPHA}+                    {printf("TOKEN: %s\n", yytext);}
-{COMMENT}                   {}
 [ \t\n]                     {}
 .                           {printf("Unrecognized character found  %s\n", yytext);}
 %%

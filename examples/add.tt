@@ -1,5 +1,5 @@
-# A simple program which adds two numbers together
-# This program should output '150'
+V A simple program which adds two numbers together
+V This program should output '150'
 
 chirp main() {
   egg a;
