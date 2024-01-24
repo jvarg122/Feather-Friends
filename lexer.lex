@@ -43,7 +43,7 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 ">="                        {printf("GREATEREQUAL\n");}
 "=="                        {printf("EQUALITY\n");}
 "!="                        {printf("NOTEQUAL\n");}
-[V].*[\n]                   S{printf("COMMENT\n");}
+[V].*[\n]                   {printf("COMMENT\n");}
 {DIGIT}+                    {printf("NUMBER: %s\n", yytext);}
 {IDENTIFIER}+               {printf("TOKEN IDENTIFIER: %s\n", yytext);}
 {INVALIDIDENTIFIER}+        {printf("Invalid identifier found: %s\n", yytext);}
