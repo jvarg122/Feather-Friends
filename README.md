@@ -65,10 +65,10 @@
 
 ### Comments
 
-Comments can be single line comments starting with `\/`. For example:
+Comments can be single line comments starting with `V`. For example:
 
 ```
-egg x; \/ This is a variable declaration.
+egg x; V This is a variable declaration.
 ```
 
 
