@@ -1,13 +1,13 @@
 all: print_lexer parser print_parser
 
-print_lexer: lex.yy.c
+print_lexer: print_lexer.yy.c
 	gcc -o $@ $< -lfl
 
-parser: lex.yy.c parser.tab.c parser.tab.h
-	gcc -o parser parser.tab.c lex.yy.c -lfl -lm
+parser: lexer.yy.c parser.tab.c parser.tab.h
+	gcc -o parser parser.tab.c lexer.yy.c -lfl -lm
 
-print_parser: lex.yy.c print_parser.tab.c parser.tab.h
-	gcc -o print_parser print_parser.tab.c lex.yy.c -lfl -lm
+print_parser: lexer.yy.c print_parser.tab.c parser.tab.h
+	gcc -o print_parser print_parser.tab.c lexer.yy.c -lfl -lm
 
 %.yy.c: %.lex
 	flex -o$@ $<

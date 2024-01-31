@@ -10,7 +10,7 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 
 %%
 
-"chirp"                     {return FUNC;}
+"chirp"                     {printf("FUNC\n");}
 "migrate"                   {printf("RETURN\n");}
 "egg"                       {printf("INT\n");}
 "squawk"                    {printf("PRINT\n");}
