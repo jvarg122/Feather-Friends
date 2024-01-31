@@ -2,6 +2,9 @@
 
 **Author(s):** Dalton Witt, Josue Vargas, Alejandro Vargas, Jenhua Chang
 
+![image](https://github.com/CitrusHappy/cs-152-feather-friends/assets/36286623/56bd944e-af45-489b-b8ec-4aab9d760445)
+
+
 ### Language Features
 
 | Language Feature      | Code Example |
@@ -62,10 +65,10 @@
 
 ### Comments
 
-Comments can be single line comments starting with `\/`. For example:
+Comments can be single line comments starting with `V`. For example:
 
 ```
-egg x; \/ This is a variable declaration.
+egg x; V This is a variable declaration.
 ```
 
 
