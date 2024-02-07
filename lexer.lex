@@ -25,9 +25,8 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 
 "("                         {return LEFTPAREN;}
 ")"                         {return RIGHTPAREN;}
-return"                     {return RIGHTPAREN;}
 "{"                         {return LEFTCURLY;}
-"}"                         {return RIGHTPAREN;}
+"}"                         {return RIGHTCURLY;}
 "["                         {return LEFTBRACKET;}
 "]"                         {return RIGHTBRACKET;}
 ","                         {return COMMA;}

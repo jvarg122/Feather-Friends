@@ -10,3 +10,7 @@ chirp main() {
   c = a + b;
   squawk(c);
 }
+
+squawk(int count) {
+  
+}
