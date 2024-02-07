@@ -11,44 +11,45 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 %%
 
 "chirp"                     {return FUNC;}
-"migrate"                   {printf("RETURN\n");}
-"egg"                       {printf("INT\n");}
-"squawk"                    {printf("PRINT\n");}
-"survey"                    {printf("READ\n");}
-"peck"                      {printf("WRITE\n");}
-"nest"                      {printf("WHILE\n");}
-"fly"                       {printf("IF\n");}
-"land"                      {printf("ELSE\n");}
-"roast"                     {printf("BREAK\n");}
-"soar"                      {printf("CONTINUE\n");}
+"migrate"                   {return RETURN;}
+"egg"                       {return INT;}
+"squawk"                    {return PRINT;}
+"survey"                    {return READ;}
+"peck"                      {return WRITE;}
+"nest"                      {return WHILE;}
+"fly"                       {return IF;}
+"land"                      {return ELSE;}
+"roast"                     {return BREAK;}
+"soar"                      {return CONTINUE;}
 
 
-"("                         {printf("LEFTPAREN\n");}
-")"                         {printf("RIGHTPAREN\n");}
-"{"                         {printf("LEFTCURLY\n");}
-"}"                         {printf("RIGHTPAREN\n");}
-"["                         {printf("LEFTBRACKET\n");}
-"]"                         {printf("RIGHTBRACKET\n");}
-","                         {printf("COMMA\n");}
-";"                         {printf("SEMICOLON\n");}
-"+"                         {printf("PLUS\n");}
-"-"                         {printf("SUBTRACT\n");}
-"*"                         {printf("MULTIPLY\n");}
-"/"                         {printf("DIVIDE\n");}
-"%"                         {printf("MODULUS\n");}
-"="                         {printf("ASSIGN\n");}
-"<"                         {printf("LESS\n");}
-"<="                        {printf("LESSEQUAL\n");}
-">"                         {printf("GREATER\n");}
-">="                        {printf("GREATEREQUAL\n");}
-"=="                        {printf("EQUALITY\n");}
-"!="                        {printf("NOTEQUAL\n");}
-[V].*[\n]                   {printf("COMMENT\n");}
-{DIGIT}+                    {printf("NUMBER: %s\n", yytext);}
-{IDENTIFIER}+               {printf("TOKEN IDENTIFIER: %s\n", yytext);}
-{INVALIDIDENTIFIER}+        {printf("Invalid identifier found: %s\n", yytext);}
+"("                         {return LEFTPAREN;}
+")"                         {return RIGHTPAREN;}
+return"                     {return RIGHTPAREN;}
+"{"                         {return LEFTCURLY;}
+"}"                         {return RIGHTPAREN;}
+"["                         {return LEFTBRACKET;}
+"]"                         {return RIGHTBRACKET;}
+","                         {return COMMA;}
+";"                         {return SEMICOLON;}
+"+"                         {return PLUS;}
+"-"                         {return SUBTRACT;}
+"*"                         {return MULTIPLY;}
+"/"                         {return DIVIDE;}
+"%"                         {return MODULUS;}
+"="                         {return ASSIGN;}
+"<"                         {return LESS;}
+"<="                        {return LESSEQUAL;}
+">"                         {return GREATER;}
+">="                        {return GREATEREQUAL;}
+"=="                        {return EQUALITY;}
+"!="                        {return NOTEQUAL;}
+[V].*[\n]                   {return COMMENT;}
+{DIGIT}+                    {return NUMBER;}
+{IDENTIFIER}+               {return TOKEN_IDENTIFIER;}
+{INVALIDIDENTIFIER}+        {return Invalid identifier found;}
 [ \t\n]                     {}
-.                           {printf("Unrecognized character found  %s\n", yytext);}
+.                           {return Unrecognized character found;}
 %%
 
 int main(void) {
