@@ -1,7 +1,7 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
-    #include "heading.h"
+    
     
     int yyerror(char *s);
     int yylex(void);
@@ -13,15 +13,17 @@
 
 // TODO: Need to implement these still
 %token READ WRITE WHILE IF ELSE CONTINUE LEFTBRACKET RIGHTBRACKET
-% LESS LESSEQUAL GREATER GREATEREQUAL EQUALITY NOTEQUAL
+%token LESS LESSEQUAL GREATER GREATEREQUAL EQUALITY NOTEQUAL
+
+%token COMMENT TOKEN_IDENTIFIER
 
 %start program
 
 %%
 
-program: %empty
-        | program function
-        | COMMENT
+program: %empty {printf("program -> epsilon\n");}
+        | program function {printf("program -> program function\n");}
+        | COMMENT {printf("program -> COMMENT\n");}
         ;
 
 //
@@ -29,28 +31,28 @@ function: FUNC TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY st
         | FUNC type TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY
         ;
 
-new_parameters: %empty
-          | new_parameter
+new_parameters: %empty {printf("new_parameters -> epsilon\n");}
+          | new_parameter {printf("new_parameters -> new_parameter\n");}
           ;
 
 // int x
 // int x, int y
 new_parameter: type TOKEN_IDENTIFIER
-            | type TOKEN_IDENTIFIER COMMA new_parameter
+            | type TOKEN_IDENTIFIER COMMA new_parameter {printf("new_parameter -> type TOKEN_IDENTIFIER COMMA new_parameter\n");}
             ;
 
-parameters: %empty
-          | parameter
+parameters: %empty {printf("parameters -> epsilon\n");}
+          | parameter {printf("parameters -> parameter\n");}
           ;
 
 // x
 // x, y, z 
 parameter: TOKEN_IDENTIFIER
-        | TOKEN_IDENTIFIER COMMA parameter
+        | TOKEN_IDENTIFIER COMMA parameter {printf("parameter -> TOKEN_IDENTIFIER COMMA parameter\n");}
         ;
 
-statements: %empty
-          | statements statement
+statements: %empty {printf("statements -> epsilon\n");}
+          | statements statement {printf("statements -> statements statement\n");}
           ;
 
 // a = b;
@@ -61,10 +63,10 @@ statements: %empty
 statement: new_variable
         | function_call
         | print
-        | RETURN TOKEN_IDENTIFIER SEMICOLON
-        | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON
-        | COMMENT
-        | BREAK SEMICOLON
+        | RETURN TOKEN_IDENTIFIER SEMICOLON {printf("statement -> RETURN TOKEN_IDENTIFIER SEMICOLON\n");}
+        | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {printf("statement -> TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON\n");}
+        | COMMENT {printf("statement -> COMMENT\n");}
+        | BREAK SEMICOLON {printf("statement -> BREAK SEMICOLON\n");}
         ;
 
 // int x;
@@ -75,9 +77,9 @@ new_variable: type TOKEN_IDENTIFIER SEMICOLON
 
 type: INT
 
-print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON
+print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {printf("print -> PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON\n");}
 
-function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON
+function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {printf("function_call -> TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN SEMICOLON\n");}
 
 expressions: %empty                 {printf("expressions -> epsilon\n");}
            | expressions expression {printf("expressions -> expressions expression\n");}
@@ -85,15 +87,16 @@ expressions: %empty                 {printf("expressions -> epsilon\n");}
 
 // x + 1 + 2 + y
 // x/2 + 1/3
-expression: add     {printf("expression -> add\n");}
-          | sub     {printf("expression -> sub\n");}
-          | mult    {printf("expression -> mult\n");}
-          | div     {printf("expression -> div\n");}
-          | mod     {printf("expression -> mod\n");}
+/*
+expression: PLUS     {printf("expression -> PLUS\n");}
+          | SUBTRACT     {printf("expression -> SUBTRACT\n");}
+          | MULTIPLY   {printf("expression -> MULTIPLY\n");}
+          | DIVIDE    {printf("expression -> DIVIDE\n");}
+          | MODULUS    {printf("expression -> MODULUS\n");}
           | NUMBER  {printf("expression -> NUMBER\n");}
-          | TOKEN_IDENTIFIER
+          | TOKEN_IDENTIFIER {printf("expression -> TOKEN_IDENTIFIER\n");}
           ;
-
+*/
 
 // EXAMPLES OF EXPRESSIONS
 /* 
@@ -110,11 +113,26 @@ expression
 => (div + TOKEN_IDENTIFIER)
 => ((expression / expression) + TOKEN_IDENTIFIER)
 */
-add:    LEFTPAREN expression PLUS expression RIGHTPAREN
-sub:    LEFTPAREN expression SUBTRACT expression RIGHTPAREN
-mult:   LEFTPAREN expression MULTIPLY expression RIGHTPAREN
-div:    LEFTPAREN expression DIVIDE expression RIGHTPAREN
-mod:    LEFTPAREN expression MODULUS expression RIGHTPAREN
+
+/*
+add:    LEFTPAREN expression PLUS expression RIGHTPAREN {printf("add -> LEFTPAREN expression PLUS expression RIGHTPAREN\n");}
+sub:    LEFTPAREN expression SUBTRACT expression RIGHTPAREN {printf("sub -> LEFTPAREN expression SUBTRACT expression RIGHTPAREN\n");}
+mult:   LEFTPAREN expression MULTIPLY expression RIGHTPAREN {printf("mult -> LEFTPAREN expression MULTIPLY expression RIGHTPAREN\n");}
+div:    LEFTPAREN expression DIVIDE expression RIGHTPAREN {printf("div -> LEFTPAREN expression DIVIDE expression RIGHTPAREN\n");}
+mod:    LEFTPAREN expression MODULUS expression RIGHTPAREN {printf("mod -> LEFTPAREN expression MODULUS expression RIGHTPAREN\n");}
+*/
+
+expression: NUMBER {printf("expression -> NUMBER\n");}
+          | TOKEN_IDENTIFIER {printf("expression -> TOKEN_IDENTIFIER\n");}
+          | expression PLUS expression {printf("expression -> expression PLUS expression\n");}
+          | expression SUBTRACT expression {printf("expression -> expression SUBTRACT expression\n");}
+          | expression MULTIPLY expression {printf("expression -> expression MULTIPLY expression\n");}
+          | expression DIVIDE expression {printf("expression -> expression DIVIDE expression\n");}
+          | expression MODULUS expression {printf("expression -> expression MODULUS expression\n");}
+          ;
+
+//comment: COMMENT { printf("Comment found\n");};
+//identifier: TOKEN_IDENTIFIER { printf("Identifier found\n");};
 
 %%
 

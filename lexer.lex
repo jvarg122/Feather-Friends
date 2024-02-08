@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include "bison_parser.tab.h"
 %}
 
 DIGIT [0-9]
