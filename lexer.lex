@@ -47,9 +47,9 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 [V].*[\n]                   {return COMMENT;}
 {DIGIT}+                    {return NUMBER;}
 {IDENTIFIER}+               {return TOKEN_IDENTIFIER;}
-{INVALIDIDENTIFIER}+        {return Invalid identifier found;}
+{INVALIDIDENTIFIER}+        {return INVALIDIDENTIFIER;}
 [ \t\n]                     {}
-.                           {return Unrecognized character found;}
+.                           {return UNRECOGNIZED_CHARACTER;}
 %%
 
 int main(void) {
