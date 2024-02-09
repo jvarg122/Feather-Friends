@@ -4,12 +4,4 @@ chirp main() {
   V Should print out '2'
   array[0] = 2;
   squawk(array[0]);
-
-  V Should print out '4'
-  array[1] = array[0] + array[0];
-  squawk(array[1]);
-
-  V Should print out '8'
-  array[2] = array[1] + 2 * 2;
-  squawk(array[2]);
 }

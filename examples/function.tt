@@ -12,7 +12,5 @@ chirp main() {
     a = add(10, 2);
     squawk(a);
     b = mul(a, a + b);
-    ?;
-    egg 1b;
     squawk(b);
 }

@@ -47,7 +47,6 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 [V].*[\n]                   {return COMMENT;}
 {DIGIT}+                    {return NUMBER;}
 {IDENTIFIER}+               {return TOKEN_IDENTIFIER;}
-{INVALIDIDENTIFIER}+        {return INVALID_IDENTIFIER;}
 [ \t\n]                     {}
-.                           {return UNRECOGNIZED_CHARACTER;}
+.                           {return yytext[0];}
 %%
