@@ -1,5 +1,6 @@
+#line 2 "lexer.yy.c"
 
-#line 3 "lex.yy.c"
+#line 4 "lexer.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -534,8 +535,8 @@ char *yytext;
 #line 1 "lexer.lex"
 #line 2 "lexer.lex"
 #include <stdio.h>
-#include "bison_parser.tab.h"
-#line 539 "lex.yy.c"
+#include "parser.tab.h"
+#line 540 "lexer.yy.c"
 
 #define INITIAL 0
 
@@ -720,7 +721,7 @@ YY_DECL
 #line 12 "lexer.lex"
 
 
-#line 724 "lex.yy.c"
+#line 725 "lexer.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -977,7 +978,7 @@ YY_RULE_SETUP
 case 35:
 YY_RULE_SETUP
 #line 50 "lexer.lex"
-{return INVALIDIDENTIFIER;}
+{return INVALID_IDENTIFIER;}
 	YY_BREAK
 case 36:
 /* rule 36 can match eol */
@@ -995,7 +996,7 @@ YY_RULE_SETUP
 #line 53 "lexer.lex"
 ECHO;
 	YY_BREAK
-#line 999 "lex.yy.c"
+#line 1000 "lexer.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

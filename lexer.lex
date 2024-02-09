@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#include "bison_parser.tab.h"
+#include "parser.tab.h"
 %}
 
 DIGIT [0-9]
@@ -47,11 +47,7 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 [V].*[\n]                   {return COMMENT;}
 {DIGIT}+                    {return NUMBER;}
 {IDENTIFIER}+               {return TOKEN_IDENTIFIER;}
-{INVALIDIDENTIFIER}+        {return INVALIDIDENTIFIER;}
+{INVALIDIDENTIFIER}+        {return INVALID_IDENTIFIER;}
 [ \t\n]                     {}
 .                           {return UNRECOGNIZED_CHARACTER;}
 %%
-
-int main(void) {
-    yylex();
-}
