@@ -45,8 +45,9 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 "=="                        {return EQUALITY;}
 "!="                        {return NOTEQUAL;}
 [V].*[\n]                   {return COMMENT;}
+{INVALIDIDENTIFIER}+        {printf("Invalid identifier found: %s\n", yytext);}
 {DIGIT}+                    {return NUMBER;}
 {IDENTIFIER}+               {return TOKEN_IDENTIFIER;}
 [ \t\n]                     {}
-.                           {return yytext[0];}
+.                           {printf("Unrecognized character found  %s\n", yytext);}
 %%
