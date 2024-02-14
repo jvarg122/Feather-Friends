@@ -2,11 +2,6 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string>
-
-    struct CodeNode {
-        std::string code;
-        std::string name;
-    }
     
     int yyerror(char *s);
     int yylex(void);
