@@ -26,17 +26,23 @@
 // ====================
 // TODO: Dalton Witt
 // ====================
-program: %empty {printf("program -> epsilon\n");}
+program: %empty {
+        
+}
         | program function {
-
+                
 }
         | COMMENT {
 
 }
         ;
 
-function: FUNC TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY 
-        | FUNC type TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY
+function: FUNC TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
+
+}
+        | FUNC type TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
+
+}
         ;
 
 new_parameters: %empty {
@@ -49,7 +55,9 @@ new_parameters: %empty {
 
 // int x
 // int x, int y
-new_parameter: type TOKEN_IDENTIFIER
+new_parameter: type TOKEN_IDENTIFIER {
+
+}
             | type TOKEN_IDENTIFIER COMMA new_parameter {
 
 }
@@ -68,7 +76,9 @@ parameters: %empty {
 
 // x
 // x, y, z 
-parameter: TOKEN_IDENTIFIER
+parameter: TOKEN_IDENTIFIER {
+
+}
         | TOKEN_IDENTIFIER COMMA parameter {
 
 }
@@ -124,7 +134,9 @@ new_variable: type TOKEN_IDENTIFIER SEMICOLON {
 }
             ;
 
-type: INT
+type: INT {
+        
+}
 
 print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
 
@@ -137,7 +149,7 @@ function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
 // ====================
 // TODO: Alejandro
 // ====================
-expressions: %empty                 {
+expressions: %empty {
 
 }
            | expressions expression {
