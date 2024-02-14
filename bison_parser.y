@@ -27,39 +27,59 @@
 // TODO: Dalton Witt
 // ====================
 program: %empty {printf("program -> epsilon\n");}
-        | program function {printf("program -> program function\n");}
-        | COMMENT {printf("program -> COMMENT\n");}
+        | program function {
+
+}
+        | COMMENT {
+
+}
         ;
 
 function: FUNC TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY 
         | FUNC type TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY
         ;
 
-new_parameters: %empty {printf("new_parameters -> epsilon\n");}
-          | new_parameter {printf("new_parameters -> new_parameter\n");}
+new_parameters: %empty {
+
+}
+          | new_parameter {
+
+}
           ;
 
 // int x
 // int x, int y
 new_parameter: type TOKEN_IDENTIFIER
-            | type TOKEN_IDENTIFIER COMMA new_parameter {printf("new_parameter -> type TOKEN_IDENTIFIER COMMA new_parameter\n");}
+            | type TOKEN_IDENTIFIER COMMA new_parameter {
+
+}
             ;
 
 // ====================
 // TODO: Josue
 // ====================
-parameters: %empty {printf("parameters -> epsilon\n");}
-          | parameter {printf("parameters -> parameter\n");}
+parameters: %empty {
+
+}
+          | parameter {
+
+}
           ;
 
 // x
 // x, y, z 
 parameter: TOKEN_IDENTIFIER
-        | TOKEN_IDENTIFIER COMMA parameter {printf("parameter -> TOKEN_IDENTIFIER COMMA parameter\n");}
+        | TOKEN_IDENTIFIER COMMA parameter {
+
+}
         ;
 
-statements: %empty {printf("statements -> epsilon\n");}
-          | statements statement {printf("statements -> statements statement\n");}
+statements: %empty {
+
+}
+          | statements statement {
+
+}
           ;
 
 // a = b;
@@ -67,45 +87,85 @@ statements: %empty {printf("statements -> epsilon\n");}
 // int x;
 // int x = 0;
 // x = y + 1
-statement: new_variable {printf("statement -> new_variable\n");}
-        | function_call {printf("statement -> function_call\n");}
-        | print {printf("statement -> print\n");}
+statement: new_variable {
+
+}
+        | function_call {
+
+}
+        | print {
+
+}
 
 // ====================
 // TODO: Jen Hua
 // ====================
-        | RETURN TOKEN_IDENTIFIER SEMICOLON {printf("statement -> RETURN TOKEN_IDENTIFIER SEMICOLON\n");}
-        | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {printf("statement -> TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON\n");}
-        | COMMENT {printf("statement -> COMMENT\n");}
-        | BREAK SEMICOLON {printf("statement -> BREAK SEMICOLON\n");}
+        | RETURN TOKEN_IDENTIFIER SEMICOLON {
+
+}
+        | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {
+
+}
+        | COMMENT {
+
+}
+        | BREAK SEMICOLON {
+
+}
         ;
 
 // int x;
 // int x = 0;
-new_variable: type TOKEN_IDENTIFIER SEMICOLON {printf("new_variable -> type TOKEN_IDENTIFIER SEMICOLON\n");}
-            | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {printf("new_variable -> type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON\n");}
+new_variable: type TOKEN_IDENTIFIER SEMICOLON {
+
+}
+            | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
+
+}
             ;
 
 type: INT
 
-print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {printf("print -> PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON\n");}
+print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
 
-function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {printf("function_call -> TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN SEMICOLON\n");}
+}
+
+function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
+
+}
 
 // ====================
 // TODO: Alejandro
 // ====================
-expressions: %empty                 {printf("expressions -> epsilon\n");}
-           | expressions expression {printf("expressions -> expressions expression\n");}
+expressions: %empty                 {
+
+}
+           | expressions expression {
+
+}
            ;
 
-expression: NUMBER {printf("expression -> NUMBER\n");}
-          | TOKEN_IDENTIFIER {printf("expression -> TOKEN_IDENTIFIER\n");}
-          | expression PLUS expression {printf("expression -> expression PLUS expression\n");}
-          | expression SUBTRACT expression {printf("expression -> expression SUBTRACT expression\n");}
-          | expression MULTIPLY expression {printf("expression -> expression MULTIPLY expression\n");}
-          | expression DIVIDE expression {printf("expression -> expression DIVIDE expression\n");}
-          | expression MODULUS expression {printf("expression -> expression MODULUS expression\n");}
+expression: NUMBER {
+
+}
+          | TOKEN_IDENTIFIER {
+
+}
+          | expression PLUS expression {
+
+}
+          | expression SUBTRACT expression {
+
+}
+          | expression MULTIPLY expression {
+
+}
+          | expression DIVIDE expression {
+
+}
+          | expression MODULUS expression {
+
+}
           ;
 %%
 
