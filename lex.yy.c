@@ -534,7 +534,7 @@ char *yytext;
 #line 1 "lexer.lex"
 #line 2 "lexer.lex"
 #include <stdio.h>
-#include "bison_parser.tab.h"
+#include "parser.tab.h"
 #line 539 "lex.yy.c"
 
 #define INITIAL 0
@@ -977,7 +977,7 @@ YY_RULE_SETUP
 case 35:
 YY_RULE_SETUP
 #line 50 "lexer.lex"
-{return INVALIDIDENTIFIER;}
+{return INVALID_IDENTIFIER;}
 	YY_BREAK
 case 36:
 /* rule 36 can match eol */

@@ -150,32 +150,53 @@ function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
 // TODO: Alejandro
 // ====================
 expressions: %empty {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
 
 }
            | expressions expression {
-
+                struct CodeNode *expr = $2;
+                struct CodeNode *exprs = $1;
+                struct CodeNode *node = new CodeNode;
+                node->code = exprs->code + expr->code;
+                $$ = node;
 }
            ;
 
 expression: NUMBER {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = std::to_string($1);
+                $$ = node;
 }
           | TOKEN_IDENTIFIER {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1);
+                $$ = node;
 }
           | expression PLUS expression {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " + " + $3->code;
+                $$ = node;
 }
           | expression SUBTRACT expression {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " - " + $3->code;
+                $$ = node;
 }
           | expression MULTIPLY expression {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " * " + $3->code;
+                $$ = node;
 }
           | expression DIVIDE expression {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " / " + $3->code;
+                $$ = node;
 }
           | expression MODULUS expression {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " % " + $3->code;
+                $$ = node;
 
 }
           ;

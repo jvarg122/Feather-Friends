@@ -1679,8 +1679,17 @@ int main() {
     return 0;
 }
 
-void yyerror(const char* s)
+int yyerror(string s)
 {
-  fprintf(stderr, "Parse error: %s. \n");
+  extern int yylineno;	// defined and maintained in lex.c
+  extern char *yytext;	// defined and maintained in lex.c
+  
+  cerr << "ERROR: " << s << " at symbol \"" << yytext;
+  cerr << "\" on line " << yylineno << endl;
   exit(1);
+}
+
+int yyerror(char *s)
+{
+  return yyerror(string(s));
 }
