@@ -67,28 +67,41 @@ new_parameter: type TOKEN_IDENTIFIER {
 // TODO: Josue
 // ====================
 parameters: %empty {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = "";
+                $$ = node;
 }
           | parameter {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code;
+                $$ = node
 }
           ;
 
 // x
 // x, y, z 
 parameter: TOKEN_IDENTIFIER {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1);
+                $$ = node;
 
 }
         | TOKEN_IDENTIFIER COMMA parameter {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1) + ", " + $3->code;
+                $$ = node;
 }
         ;
 
 statements: %empty {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = "";
+                $$ = node;
 }
           | statements statement {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + $2->code;
+                $$ = node;
 }
           ;
 
@@ -101,10 +114,14 @@ statement: new_variable {
 
 }
         | function_call {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + ";";
+                $$ = node;
 }
         | print {
-
+            struct CodeNode *node = new CodeNode;
+            node->code = "printf(\"%d\", " + std::string($3->code) + ");";
+            $$ = node;
 }
 
 // ====================
