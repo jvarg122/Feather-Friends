@@ -128,39 +128,57 @@ statement: new_variable {
 // TODO: Jen Hua
 // ====================
         | RETURN TOKEN_IDENTIFIER SEMICOLON {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = "return " + std::string($2) + ";";
+                $$ = node;
 }
         | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1) + " = " + $3->code + ";";
+                $$ = node;
 }
         | COMMENT {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = "//;";
+                $$ = node;
 }
         | BREAK SEMICOLON {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = "break;";
+                $$ = node;
 }
         ;
 
 // int x;
 // int x = 0;
 new_variable: type TOKEN_IDENTIFIER SEMICOLON {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " " + std::string($2) + ";";
+                $$ = node;
 }
             | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " " + std::string($2) + " = " + std::to_string($4) + ";";
+                $$ = node;
 }
             ;
 
 type: INT {
-        
+                struct CodeNode *node = new CodeNode;
+                node->code = "int";
+                $$ = node;      
 }
 
 print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = "printf(\"%d\", " + std::string($3) + ");";
+                $$ = node;
 }
 
 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1) + "(" + $3->code + ");";
+                $$ = node;
 }
 
 // ====================
@@ -245,3 +263,4 @@ int yyerror(char *s)
 {
   return yyerror(string(s));
 }
+
