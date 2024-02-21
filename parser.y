@@ -1,101 +1,119 @@
 %{
-    #include <stdio.h>
-    #include <stdlib.h>
-    
-    int yyerror(char *s);
-    int yylex(void);
 
-    enum Type { Integer, Array };
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <vector>
 
-    std::vector <Function> symbol_table;
+struct CodeNode {
+  std::string code;
+  std::string name;
+};
 
-    struct CodeNode {
-        std::string code;
-        std::string name;
-    };
+int yylex();
+void yyerror(const char *s);
+enum Type { Integer, Array };
 
-    struct Symbol {
-        std::string name;
-        Type type;
-    };
+struct Symbol {
+  std::string name;
+  Type type;
+};
 
-    struct Function {
-	std::string name;
-        std::vector<Symbol> declarations;
-    };
+struct Function {
+  std::string name;
+  std::vector<Symbol> declarations;
+};
 
-    //
-    // Helper functions, from the Phase 3 practice portion:
-	//
+std::vector <Function> symbol_table;
 
-	// remember that Bison is a bottom up parser: that it parses leaf nodes first before
-	// parsing the parent nodes. So control flow begins at the leaf grammar nodes
-	// and propagates up to the parents.
-	Function *get_function() {
-	  int last = symbol_table.size()-1;
-	  if (last < 0) {
-	    printf("***Error. Attempt to call get_function with an empty symbol table\n");
-	    printf("Create a 'Function' object using 'add_function_to_symbol_table' before\n");
-	    printf("calling 'find' or 'add_variable_to_symbol_table'");
-	    exit(1);
-	  }
-	  return &symbol_table[last];
-	}
-	
-	// find a particular variable using the symbol table.
-	// grab the most recent function, and linear search to
-	// find the symbol you are looking for.
-	// you may want to extend "find" to handle different types of "Integer" vs "Array"
-	bool find(std::string &value) {
-	  Function *f = get_function();
-	  for(int i=0; i < f->declarations.size(); i++) {
-	    Symbol *s = &f->declarations[i];
-	    if (s->name == value) {
-	      return true;
-	    }
-	  }
-	  return false;
-	}
-	
-	// when you see a function declaration inside the grammar, add
-	// the function name to the symbol table
-	void add_function_to_symbol_table(std::string &value) {
-	  Function f; 
-	  f.name = value; 
-	  symbol_table.push_back(f);
-	}
-	
-	// when you see a symbol declaration inside the grammar, add
-	// the symbol name as well as some type information to the symbol table
-	void add_variable_to_symbol_table(std::string &value, Type t) {
-	  Symbol s;
-	  s.name = value;
-	  s.type = t;
-	  Function *f = get_function();
-	  f->declarations.push_back(s);
-	}
-	
-	// a function to print out the symbol table to the screen
-	// largely for debugging purposes.
-	void print_symbol_table(void) {
-	  printf("symbol table:\n");
-	  printf("--------------------\n");
-	  for(int i=0; i<symbol_table.size(); i++) {
-	    printf("function: %s\n", symbol_table[i].name.c_str());
-	    for(int j=0; j<symbol_table[i].declarations.size(); j++) {
-	      printf("  locals: %s\n", symbol_table[i].declarations[j].name.c_str());
-	    }
-	  }
-	  printf("--------------------\n");
-	}
+// remember that Bison is a bottom up parser: that it parses leaf nodes first before
+// parsing the parent nodes. So control flow begins at the leaf grammar nodes
+// and propagates up to the parents.
+Function *get_function() {
+  int last = symbol_table.size()-1;
+  if (last < 0) {
+    printf("***Error. Attempt to call get_function with an empty symbol table\n");
+    printf("Create a 'Function' object using 'add_function_to_symbol_table' before\n");
+    printf("calling 'find' or 'add_variable_to_symbol_table'");
+    exit(1);
+  }
+  return &symbol_table[last];
+}
+
+// find a particular variable using the symbol table.
+// grab the most recent function, and linear search to
+// find the symbol you are looking for.
+// you may want to extend "find" to handle different types of "Integer" vs "Array"
+bool find(std::string &value) {
+  Function *f = get_function();
+  for(int i=0; i < f->declarations.size(); i++) {
+    Symbol *s = &f->declarations[i];
+    if (s->name == value) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// when you see a function declaration inside the grammar, add
+// the function name to the symbol table
+void add_function_to_symbol_table(std::string &value) {
+  Function f; 
+  f.name = value; 
+  symbol_table.push_back(f);
+}
+
+// when you see a symbol declaration inside the grammar, add
+// the symbol name as well as some type information to the symbol table
+void add_variable_to_symbol_table(std::string &value, Type t) {
+  Symbol s;
+  s.name = value;
+  s.type = t;
+  Function *f = get_function();
+  f->declarations.push_back(s);
+}
+
+// a function to print out the symbol table to the screen
+// largely for debugging purposes.
+void print_symbol_table(void) {
+  printf("symbol table:\n");
+  printf("--------------------\n");
+  for(int i=0; i<symbol_table.size(); i++) {
+    printf("function: %s\n", symbol_table[i].name.c_str());
+    for(int j=0; j<symbol_table[i].declarations.size(); j++) {
+      printf("  locals: %s\n", symbol_table[i].declarations[j].name.c_str());
+    }
+  }
+  printf("--------------------\n");
+}
+
+
 %}
 
+%union {
+  char *op_value;
+  struct CodeNode *code_node;
+}
+
+%define parse.error verbose
 
 %token FUNC RETURN INT PRINT BREAK LEFTPAREN RIGHTPAREN LEFTCURLY RIGHTCURLY 
 %token COMMA SEMICOLON PLUS SUBTRACT MULTIPLY DIVIDE MODULUS ASSIGN NUMBER
 %token READ WRITE WHILE IF ELSE CONTINUE LEFTBRACKET RIGHTBRACKET
 %token LESS LESSEQUAL GREATER GREATEREQUAL EQUALITY NOTEQUAL
 %token COMMENT TOKEN_IDENTIFIER
+
+%type <code_node> program
+%type <code_node> function
+%type <code_node> new_parameters
+%type <code_node> statements
+%type <code_node> statement
+%type <code_node> new_variable
+%type <code_node> print
+%type <code_node> function_call
+%type <code_node> expressions
+%type <code_node> expression
+%type <code_node> type
 
 %start program
 
@@ -119,8 +137,6 @@ program: %empty {
                 struct CodeNode *node = new CodeNode;
                 $$ = node;
 }
-                
-        ;
 
 function: FUNC TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
         struct CodeNode *node = new CodeNode;
@@ -132,7 +148,6 @@ function: FUNC TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY st
         node->code += std::string("endfunc\n\n");
         $$ = node;
 }
-        ;
 
 new_parameters: %empty {
         struct CodeNode *node = new CodeNode;
