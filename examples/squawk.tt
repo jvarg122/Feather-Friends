@@ -1,0 +1,4 @@
+chirp main() {
+squawk(0);
+survey(0);
+}
