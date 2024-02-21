@@ -222,7 +222,7 @@ statement: new_variable {
 }
         | print {
             struct CodeNode *node = new CodeNode;
-            node->code = "printf(\"%d\", " + $3->code + ");";
+            node->code = "printf(\"%d\", " + $1->code + ");";
             $$ = node;
 }
 
