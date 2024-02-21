@@ -1,52 +1,210 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+    #include <string>
     
-    extern void yyerror(const char* s);
-    extern int yylex(void);
-    extern FILE* yyin;
+    int yyerror(char *s);
+    int yylex(void);
+
+    enum Type { Integer, Array };
+
+    std::vector <Function> symbol_table;
+
+    struct CodeNode {
+        std::string code;
+        std::string name;
+    };
+
+    struct Symbol {
+        std::string name;
+        Type type;
+    };
+
+    struct Function {
+	std::string name;
+        std::vector<Symbol> declarations;
+    };
+
+    //
+    // Helper functions, from the Phase 3 practice portion:
+	//
+
+	// remember that Bison is a bottom up parser: that it parses leaf nodes first before
+	// parsing the parent nodes. So control flow begins at the leaf grammar nodes
+	// and propagates up to the parents.
+	Function *get_function() {
+	  int last = symbol_table.size()-1;
+	  if (last < 0) {
+	    printf("***Error. Attempt to call get_function with an empty symbol table\n");
+	    printf("Create a 'Function' object using 'add_function_to_symbol_table' before\n");
+	    printf("calling 'find' or 'add_variable_to_symbol_table'");
+	    exit(1);
+	  }
+	  return &symbol_table[last];
+	}
+	
+	// find a particular variable using the symbol table.
+	// grab the most recent function, and linear search to
+	// find the symbol you are looking for.
+	// you may want to extend "find" to handle different types of "Integer" vs "Array"
+	bool find(std::string &value) {
+	  Function *f = get_function();
+	  for(int i=0; i < f->declarations.size(); i++) {
+	    Symbol *s = &f->declarations[i];
+	    if (s->name == value) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+	
+	// when you see a function declaration inside the grammar, add
+	// the function name to the symbol table
+	void add_function_to_symbol_table(std::string &value) {
+	  Function f; 
+	  f.name = value; 
+	  symbol_table.push_back(f);
+	}
+	
+	// when you see a symbol declaration inside the grammar, add
+	// the symbol name as well as some type information to the symbol table
+	void add_variable_to_symbol_table(std::string &value, Type t) {
+	  Symbol s;
+	  s.name = value;
+	  s.type = t;
+	  Function *f = get_function();
+	  f->declarations.push_back(s);
+	}
+	
+	// a function to print out the symbol table to the screen
+	// largely for debugging purposes.
+	void print_symbol_table(void) {
+	  printf("symbol table:\n");
+	  printf("--------------------\n");
+	  for(int i=0; i<symbol_table.size(); i++) {
+	    printf("function: %s\n", symbol_table[i].name.c_str());
+	    for(int j=0; j<symbol_table[i].declarations.size(); j++) {
+	      printf("  locals: %s\n", symbol_table[i].declarations[j].name.c_str());
+	    }
+	  }
+	  printf("--------------------\n");
+	}
 %}
 
-%define parse.error verbose
 
 %token FUNC RETURN INT PRINT BREAK LEFTPAREN RIGHTPAREN LEFTCURLY RIGHTCURLY 
 %token COMMA SEMICOLON PLUS SUBTRACT MULTIPLY DIVIDE MODULUS ASSIGN NUMBER
-%token LEFTBRACKET RIGHTBRACKET IF ELSE READ WRITE 
+%token READ WRITE WHILE IF ELSE CONTINUE LEFTBRACKET RIGHTBRACKET
 %token LESS LESSEQUAL GREATER GREATEREQUAL EQUALITY NOTEQUAL
 %token COMMENT TOKEN_IDENTIFIER
-%token WHILE CONTINUE
-
 
 %start program
 
 %%
 
-program: %empty {printf("program -> epsilon\n");}
-        | program function {printf("program -> program function\n");}
-        | COMMENT program {printf("program -> COMMENT program\n");}
+// ====================
+// TODO: Dalton Witt
+// ====================
+program: %empty {
+        struct CodeNode *node = new CodeNode;
+        $$ = node;
+}
+        | program function {
+                struct CodeNode *program = $1;
+                struct CodeNode *function = $2;
+                struct CodeNode *node = new CodeNode;
+                node->code = program->code + function->code;
+                $$ = node;
+}
+        | COMMENT {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+                
         ;
 
-function: FUNC TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY {printf("function -> FUNC TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY\n");}
-        | FUNC type TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY {printf("function -> FUNC type TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY\n");}
+function: FUNC TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
+        struct CodeNode *node = new CodeNode;
+        struct CodeNode *new_parameters = $4;
+        struct CodeNode *statements = $7;
+        node->code = std::string("func ") + std::string($2) + std::string("\n");
+        node->code += new_parameters->code;
+        node->code += statements->code;
+        node->code += std::string("endfunc\n\n");
+        $$ = node;
+}
         ;
 
-function_call: TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN {printf("function_call -> TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN\n");}
-
-new_parameters: %empty {printf("new_parameters -> epsilon\n");}
-          | new_parameter {printf("new_parameters -> new_parameter\n");}
-          | new_parameters COMMA new_parameter {printf("new_parameters -> new_parameters COMMA new_parameter\n");}
+new_parameters: %empty {
+        struct CodeNode *node = new CodeNode;
+        $$ = node;
+}
+          | new_parameter {
+                struct CodeNode *new_parameter = $1;
+                $$ = new_parameter;
+}
           ;
 
 // int x
-new_parameter: type TOKEN_IDENTIFIER {printf("new_parameter -> type TOKEN_IDENTIFIER\n");}
+// int x, int y
+new_parameter: type TOKEN_IDENTIFIER {
+                struct CodeNode *node = new CodeNode;
+                struct CodeNode *type = $1;
+                node->code = type->code;
+                node->code += std::string(". ") + std::string($2);
+                $$ = node;
+}
+            | type TOKEN_IDENTIFIER COMMA new_parameter {
+                struct CodeNode *node = new CodeNode;
+                struct CodeNode *type = $1;
+                struct CodeNode *new_parameter = $4;
+                node->code = type->code;
+                node->code += std::string(". ") + std::string($2);
+                node->code += new_parameter->code;
+                $$ = node;
+}
+            ;
 
-parameters: %empty {printf("parameters -> epsilon\n");}
-          | expressions {printf("parameters -> expressions\n");}
-          | expressions COMMA expressions {printf("parameters -> expressions COMMA expressions\n");}
+// ====================
+// TODO: Josue
+// ====================
+parameters: %empty {
+                struct CodeNode *node = new CodeNode;
+                node->code = "";
+                $$ = node;
+}
+          | parameter {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code;
+                $$ = node
+}
           ;
 
-statements: %empty {printf("statements -> epsilon\n");}
-          | statements statement {printf("statements -> statements statement\n");}
+// x
+// x, y, z 
+parameter: TOKEN_IDENTIFIER {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1);
+                $$ = node;
+
+}
+        | TOKEN_IDENTIFIER COMMA parameter {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1) + ", " + $3->code;
+                $$ = node;
+}
+        ;
+
+statements: %empty {
+                struct CodeNode *node = new CodeNode;
+                node->code = "";
+                $$ = node;
+}
+          | statements statement {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + $2->code;
+                $$ = node;
+}
           ;
 
 // a = b;
@@ -54,101 +212,158 @@ statements: %empty {printf("statements -> epsilon\n");}
 // int x;
 // int x = 0;
 // x = y + 1
-statement: new_variable {printf("statement -> new_variable\n");}
-        | new_array {printf("statement -> new_array\n");}
-        | function_call {printf("statement -> function_call\n");}
-        | print {printf("statement -> print\n");}
-        | RETURN expressions SEMICOLON {printf("statement -> RETURN TOKEN_IDENTIFIER SEMICOLON\n");}
-        | COMMENT {printf("statement -> COMMENT\n");}
-        | BREAK SEMICOLON {printf("statement -> BREAK SEMICOLON\n");}
-        | CONTINUE SEMICOLON {printf("statement -> CONTINUE SEMICOLON\n");}
-        | if_statement {printf("statement -> if_statement\n");}
-        | while_statement {printf("statement -> while_statement\n");}
-        | read_statement {printf("statement -> read_statement\n");}
-        | write_statement {printf("statement -> write_statement\n");}
-        | assignment {printf("statement -> assignment\n");}
+statement: new_variable {
+
+}
+        | function_call {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + ";";
+                $$ = node;
+}
+        | print {
+            struct CodeNode *node = new CodeNode;
+            node->code = "printf(\"%d\", " + $1->code + ");";
+            $$ = node;
+}
+
+// ====================
+// TODO: Jen Hua
+// ====================
+        | RETURN TOKEN_IDENTIFIER SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string("return ") + std::string($2) + std::string(";");
+                $$ = node;
+}
+        | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1) + std::string(" = ")  + $3->code + std::string(";");
+                $$ = node;
+}
+        | COMMENT {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string("VV ") + $1->code + std::string(";");
+                $$ = node;
+}
+        | BREAK SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string("break;");
+                $$ = node;
+}
         ;
 
 // int x;
 // int x = 0;
-new_variable: type TOKEN_IDENTIFIER SEMICOLON {printf("new_variable -> type TOKEN_IDENTIFIER SEMICOLON\n");}
-            | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {printf("new_variable -> type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON\n");}
+new_variable: type TOKEN_IDENTIFIER SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + std::string(" ") + std::string($2) + std::string(";");
+                $$ = node;
+}
+            | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " " + std::string($2) + " = " + std::to_string($4) + std::string(";");
+                $$ = node;
+}
             ;
 
-variable: NUMBER {printf("variable -> NUMBER\n");}
-          | TOKEN_IDENTIFIER {printf("variable -> TOKEN_IDENTIFIER\n");}
-          | array_get_pointer {printf("variable -> array_get_pointer\n");}
-          | function_call {printf("variable -> function_call\n");}
-          ;
+type: INT {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
 
-// egg[4] array;
-new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON {printf("new_array -> type LEFTBRACKET NUMBER RIGHTBRACKET SEMICOLON TOKEN_IDENTIFIER\n");}
+print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code = "printf(\"%d\", " + std::string($3) + std::string(");");
+                $$ = node;
+}
 
-// somearray[0]
-array_get_pointer: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET {printf("array_get_pointer -> TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET\n");}
+function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1) + std::string("(") + $3->code + std::string(");");
+                $$ = node;
+}
 
-type: INT {printf("type -> INT\n");}
+// ====================
+// TODO: Alejandro
+// ====================
+expressions: %empty {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
 
-print: PRINT LEFTPAREN variable RIGHTPAREN SEMICOLON {printf("print -> PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON\n");}
-
-assignment: TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {printf("statement -> TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON\n");}
-        | array_get_pointer ASSIGN expressions SEMICOLON {printf("statement -> array_get_pointer ASSIGN expressions SEMICOLON\n");}
-        ;
-
-expressions: %empty                 {printf("expressions -> epsilon\n");}
-           | expressions expression {printf("expressions -> expressions expression\n");}
+}
+           | expressions expression {
+                struct CodeNode *expr = $2;
+                struct CodeNode *exprs = $1;
+                struct CodeNode *node = new CodeNode;
+                node->code = exprs->code + expr->code;
+                $$ = node;
+}
            ;
 
-// x + 1 + 2 + y
-// x/2 + 1/3
-expression: variable
-          | LEFTPAREN expression RIGHTPAREN {printf("expression -> LEFTPAREN expression RIGHTPAREN\n");}
-          | expression PLUS expression {printf("expression -> expression PLUS expression\n");}
-          | expression SUBTRACT expression {printf("expression -> expression SUBTRACT expression\n");}
-          | expression MULTIPLY expression {printf("expression -> expression MULTIPLY expression\n");}
-          | expression DIVIDE expression {printf("expression -> expression DIVIDE expression\n");}
-          | expression MODULUS expression {printf("expression -> expression MODULUS expression\n");}
+expression: NUMBER {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::to_string($1);
+                $$ = node;
+}
+          | TOKEN_IDENTIFIER {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1);
+                $$ = node;
+}
+          | expression PLUS expression {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " + " + $3->code;
+                $$ = node;
+}
+          | expression SUBTRACT expression {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " - " + $3->code;
+                $$ = node;
+}
+          | expression MULTIPLY expression {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " * " + $3->code;
+                $$ = node;
+}
+          | expression DIVIDE expression {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " / " + $3->code;
+                $$ = node;
+}
+          | expression MODULUS expression {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code + " % " + $3->code;
+                $$ = node;
+
+}
           ;
-
-boolean_expressions: expression GREATER expression {printf("boolean_expressions -> expression GREATER expression\n");}
-                   | expression LESS expression {printf("boolean_expressions -> expression LESS expression\n");}
-                   | expression LESSEQUAL expression {printf("boolean_expressions -> expression LESSEQUAL expression\n");}
-                   | expression GREATEREQUAL expression {printf("boolean_expressions -> expression GREATEREQUAL expression\n");}
-                   | expression EQUALITY expression {printf("boolean_expressions -> expression EQUALITY expression\n");}
-                   | expression NOTEQUAL expression {printf("boolean_expressions -> expression NOTEQUAL expression\n");}
-                   ;
-
-if_statement: IF LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY else_statement {printf("statement -> IF LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statement RIGHTCURLY else_statement\n");}
-        | IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statement {printf("statement -> IF boolean_expressions LEFTCURLY statement RIGHTCURLY else_statement\n");}
-        ;
-
-else_statement: ELSE LEFTCURLY statement RIGHTCURLY {printf("else_statement -> ELSE LEFTCURLY statement RIGHTCURLY\n");}
-             | %empty {printf("else_statement -> epsilon\n");}
-             ;
-
-while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {printf("statement -> WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY\n");}
-        | WHILE LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY {printf("statement -> WHILE LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY\n");}
-        ;
-
-read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {printf("read_statement -> READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON\n");}
-
-write_statement: WRITE LEFTPAREN expressions RIGHTPAREN SEMICOLON {printf("write_statement -> WRITE LEFTPAREN expressions RIGHTPAREN SEMICOLON\n");}
-
 %%
 
 int main() {
     yyin = stdin;
 
     do {
-        printf("Start parsing...\n=====================================\n");
+        printf("Parse.\n");
         yyparse();
     } while(!feof(yyin));
 
-    printf("=====================================\nDone parsing!");
+    printf("Done parsing.");
     return 0;
 }
 
-void yyerror(const char* s) {
-  fprintf(stderr, "Parse error: %s!\n", s);
+int yyerror(string s)
+{
+  extern int yylineno;	// defined and maintained in lex.c
+  extern char *yytext;	// defined and maintained in lex.c
+  
+  cerr << "ERROR: " << s << " at symbol \"" << yytext;
+  cerr << "\" on line " << yylineno << endl;
   exit(1);
 }
+
+int yyerror(char *s)
+{
+  return yyerror(string(s));
+}
+
+
+
