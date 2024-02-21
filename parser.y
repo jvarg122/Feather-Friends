@@ -98,14 +98,16 @@ void print_symbol_table(void) {
 %define parse.error verbose
 
 %token FUNC RETURN INT PRINT BREAK LEFTPAREN RIGHTPAREN LEFTCURLY RIGHTCURLY 
-%token COMMA SEMICOLON PLUS SUBTRACT MULTIPLY DIVIDE MODULUS ASSIGN NUMBER
+%token COMMA SEMICOLON PLUS SUBTRACT MULTIPLY DIVIDE MODULUS ASSIGN
 %token READ WRITE WHILE IF ELSE CONTINUE LEFTBRACKET RIGHTBRACKET
 %token LESS LESSEQUAL GREATER GREATEREQUAL EQUALITY NOTEQUAL
-%token COMMENT TOKEN_IDENTIFIER
+%token <op_value> NUMBER
+%token <op_value> TOKEN_IDENTIFIER
 
 %type <code_node> program
 %type <code_node> function
 %type <code_node> new_parameters
+%type <code_node> new_parameter
 %type <code_node> statements
 %type <code_node> statement
 %type <code_node> new_variable
@@ -113,6 +115,8 @@ void print_symbol_table(void) {
 %type <code_node> function_call
 %type <code_node> expressions
 %type <code_node> expression
+%type <code_node> parameters
+%type <code_node> parameter
 %type <code_node> type
 
 %start program
@@ -131,10 +135,6 @@ program: %empty {
                 struct CodeNode *function = $2;
                 struct CodeNode *node = new CodeNode;
                 node->code = program->code + function->code;
-                $$ = node;
-}
-        | COMMENT {
-                struct CodeNode *node = new CodeNode;
                 $$ = node;
 }
 
@@ -190,7 +190,7 @@ parameters: %empty {
           | parameter {
                 struct CodeNode *node = new CodeNode;
                 node->code = $1->code;
-                $$ = node
+                $$ = node;
 }
           ;
 
@@ -253,11 +253,6 @@ statement: new_variable {
                 node->code = std::string($1) + std::string(" = ")  + $3->code + std::string(";");
                 $$ = node;
 }
-        | COMMENT {
-                struct CodeNode *node = new CodeNode;
-                node->code = std::string("VV ") + $1->code + std::string(";");
-                $$ = node;
-}
         | BREAK SEMICOLON {
                 struct CodeNode *node = new CodeNode;
                 node->code = std::string("break;");
@@ -274,7 +269,7 @@ new_variable: type TOKEN_IDENTIFIER SEMICOLON {
 }
             | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = $1->code + " " + std::string($2) + " = " + std::to_string($4) + std::string(";");
+                node->code = $1->code + " " + std::string($2) + " = " + std::string($4) + std::string(";");
                 $$ = node;
 }
             ;
@@ -315,7 +310,7 @@ expressions: %empty {
 
 expression: NUMBER {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::to_string($1);
+                node->code = std::string($1);
                 $$ = node;
 }
           | TOKEN_IDENTIFIER {
@@ -352,31 +347,12 @@ expression: NUMBER {
           ;
 %%
 
-int main() {
-    yyin = stdin;
-
-    do {
-        printf("Parse.\n");
-        yyparse();
-    } while(!feof(yyin));
-
-    printf("Done parsing.");
-    return 0;
+int main(void) {
+  yyparse();
 }
 
-int yyerror(string s)
-{
-  extern int yylineno;	// defined and maintained in lex.c
-  extern char *yytext;	// defined and maintained in lex.c
-  
-  cerr << "ERROR: " << s << " at symbol \"" << yytext;
-  cerr << "\" on line " << yylineno << endl;
-  exit(1);
-}
-
-int yyerror(char *s)
-{
-  return yyerror(string(s));
+void yyerror(const char *s) {
+  printf("Error: %s\n", s);
 }
 
 

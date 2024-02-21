@@ -1,6 +1,12 @@
 %{
 #include <stdio.h>
 #include "parser.tab.h"
+
+char *create_string(char *text, int len) {
+  char *string_value = new char[len + 1];
+  strcpy(string_value, text);
+  return string_value;
+}
 %}
 
 DIGIT [0-9]
@@ -44,10 +50,10 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 ">="                        {return GREATEREQUAL;}
 "=="                        {return EQUALITY;}
 "!="                        {return NOTEQUAL;}
-[V].*[\n]                   {return COMMENT;}
+[V].*[\n]                   {}
 {INVALIDIDENTIFIER}+        {printf("Invalid identifier found: %s\n", yytext);}
-{DIGIT}+                    {return NUMBER;}
-{IDENTIFIER}+               {return TOKEN_IDENTIFIER;}
+{DIGIT}+                    {yylval.op_value = create_string(yytext, yyleng); return NUMBER;}
+{IDENTIFIER}+               {yylval.op_value = create_string(yytext, yyleng); return TOKEN_IDENTIFIER;}
 [ \t\n]                     {}
 .                           {printf("Unrecognized character found  %s\n", yytext);}
 %%
