@@ -1,4 +1,4 @@
-nclude <stdio.h>
+ude <stdio.h>
     #include <stdlib.h>
     #include <string>
 
@@ -133,7 +133,7 @@ statement: new_variable {
 }
         | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string($1) + std::string(" = ")  + $3->code + std::string()";";
+                node->code = std::string($1) + std::string(" = ")  + $3->code + std::string(";");
                 $$ = node;
 }
         | COMMENT {
@@ -157,26 +157,25 @@ new_variable: type TOKEN_IDENTIFIER SEMICOLON {
 }
             | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = $1->code + " " + $2->code + " = " + std::to_string($4) + std::string(";");
+                node->code = $1->code + " " + std::string($2) + " = " + std::to_string($4) + std::string(";");
                 $$ = node;
 }
             ;
 
 type: INT {
                 struct CodeNode *node = new CodeNode;
-                node->code = "int";
-                $$ = node;      
+                $$ = node;
 }
 
 print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = "printf(\"%d\", " + std::string($3) + ");";
+                node->code = "printf(\"%d\", " + std::string($3) + std::string(");");
                 $$ = node;
 }
-
+s
 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string($1) + "(" + $3->code + ");";
+                node->code = std::string($1) + std::string("(") + $3->code + std::string(");");
                 $$ = node;
 }
 
@@ -262,5 +261,6 @@ int yyerror(char *s)
 {
   return yyerror(string(s));
 }
+
 
 
