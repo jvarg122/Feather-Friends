@@ -222,7 +222,7 @@ statement: new_variable {
 }
         | print {
             struct CodeNode *node = new CodeNode;
-            node->code = "printf(\"%d\", " + std::string($3->code) + ");";
+            node->code = "printf(\"%d\", " + $3->code + ");";
             $$ = node;
 }
 
@@ -275,7 +275,7 @@ print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
                 node->code = "printf(\"%d\", " + std::string($3) + std::string(");");
                 $$ = node;
 }
-s
+
 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
                 struct CodeNode *node = new CodeNode;
                 node->code = std::string($1) + std::string("(") + $3->code + std::string(");");
