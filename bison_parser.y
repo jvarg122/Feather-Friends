@@ -1,5 +1,4 @@
-%{
-    #include <stdio.h>
+nclude <stdio.h>
     #include <stdlib.h>
     #include <string>
 
@@ -129,22 +128,22 @@ statement: new_variable {
 // ====================
         | RETURN TOKEN_IDENTIFIER SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = "return " + std::string($2) + ";";
+                node->code = std::string("return ") + std::string($2) + std::string(";");
                 $$ = node;
 }
         | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string($1) + " = " + $3->code + ";";
+                node->code = std::string($1) + std::string(" = ")  + $3->code + std::string()";";
                 $$ = node;
 }
         | COMMENT {
                 struct CodeNode *node = new CodeNode;
-                node->code = "//;";
+                node->code = std::string("VV ") + $1->code + std::string(";");
                 $$ = node;
 }
         | BREAK SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = "break;";
+                node->code = std::string("break;");
                 $$ = node;
 }
         ;
@@ -153,12 +152,12 @@ statement: new_variable {
 // int x = 0;
 new_variable: type TOKEN_IDENTIFIER SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = $1->code + " " + std::string($2) + ";";
+                node->code = $1->code + std::string(" ") + std::string($2) + std::string(";");
                 $$ = node;
 }
             | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = $1->code + " " + std::string($2) + " = " + std::to_string($4) + ";";
+                node->code = $1->code + " " + $2->code + " = " + std::to_string($4) + std::string(";");
                 $$ = node;
 }
             ;
@@ -263,4 +262,5 @@ int yyerror(char *s)
 {
   return yyerror(string(s));
 }
+
 
