@@ -310,12 +310,19 @@ statement: new_variable {
 
 if_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statement {
 		struct CodeNode *node = new CodeNode;
-		struct CodeNode *temp = create_label();
-		node->code += temp->code;
-                node->code = std::string("?:= ") + temp->name + std::string(", ") + std::string($2);
+		//struct CodeNode *temp = create_label();
+		//node->code = temp->code;
+    //node->code += std::string("?:= ") + temp->name + std::string(", ") + std::string($2);
 		$$ = node;
  
 }
+
+new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON {
+                // TODO
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+
 
 array_get_pointer: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET {
                 // TODO
@@ -349,23 +356,12 @@ return_statement: RETURN TOKEN_IDENTIFIER SEMICOLON {
 }
         ;
 
-if_statement: IF LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY else_statement {
-                // TODO
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
-}
-        | IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statement {
-                // TODO
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
-}
-        ;
-
 else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
+    // TODO: finish
 		struct CodeNode *node = new CodeNode;
-		struct CodeNode *temp = create_label();
-		node->code += temp->code;
-                node->code = std::string(":= ") + temp->name;
+		//struct CodeNode *temp = create_label();
+		//node->code = temp->code;
+    //node->code += std::string(":= ") + temp->name;
 		$$ = node;
 }
              | %empty {
@@ -375,24 +371,20 @@ else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
              ;
 
 while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
+    // TODO: finish
 		struct CodeNode *node = new CodeNode;
-		struct CodeNode *temp = create_label();
-		node->code += temp->code;
-                node->code = std::string("?:= ") + temp->name + std::string(", ") + std::string($2);
+		//struct CodeNode *temp = create_label();
+		//node->code = temp->code;
+    //node->code += std::string("?:= ") + temp->name + std::string(", ") + std::string($2);
 		$$ = node;
  
-}
-        | WHILE LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
-                // TODO
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
 }
         ;
 
 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
-		struct CodeNode *node = new CodeNode;
-                node->code = std::string(".< ") + std::string($3);
-		$$ = node;
+		      struct CodeNode *node = new CodeNode;
+          node->code = std::string(".< ") + std::string($3);
+		      $$ = node;
 			}
 
 boolean_expressions: expression GREATER expression {
