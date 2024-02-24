@@ -51,8 +51,8 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 "!="                        {return NOTEQUAL;}
 [V].*[\n]                   {}
 {INVALIDIDENTIFIER}+        {printf("Invalid identifier found: %s\n", yytext);}
-{DIGIT}+                    {/*yylval.op_value = create_string(yytext, yyleng);*/ return NUMBER;}
-{IDENTIFIER}+               {/*yylval.op_value = create_string(yytext, yyleng);*/ return TOKEN_IDENTIFIER;}
+{DIGIT}+                    {yylval.op_value = create_string(yytext, yyleng); return NUMBER;}
+{IDENTIFIER}+               {yylval.op_value = create_string(yytext, yyleng); return TOKEN_IDENTIFIER;}
 [ \t\n]                     {}
 .                           {printf("Unrecognized character found  %s\n", yytext);}
 %%

@@ -724,7 +724,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 18 "lexer.lex"
+#line 17 "lexer.lex"
 
 
 #line 731 "lexer.yy.c"
@@ -812,194 +812,194 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 20 "lexer.lex"
+#line 19 "lexer.lex"
 {return FUNC;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 21 "lexer.lex"
+#line 20 "lexer.lex"
 {return RETURN;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 22 "lexer.lex"
+#line 21 "lexer.lex"
 {return INT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 23 "lexer.lex"
+#line 22 "lexer.lex"
 {return PRINT;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 24 "lexer.lex"
+#line 23 "lexer.lex"
 {return READ;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 25 "lexer.lex"
+#line 24 "lexer.lex"
 {return WRITE;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 26 "lexer.lex"
+#line 25 "lexer.lex"
 {return WHILE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 27 "lexer.lex"
+#line 26 "lexer.lex"
 {return IF;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 28 "lexer.lex"
+#line 27 "lexer.lex"
 {return ELSE;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 29 "lexer.lex"
+#line 28 "lexer.lex"
 {return BREAK;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 30 "lexer.lex"
+#line 29 "lexer.lex"
 {return CONTINUE;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 33 "lexer.lex"
+#line 32 "lexer.lex"
 {return LEFTPAREN;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 34 "lexer.lex"
+#line 33 "lexer.lex"
 {return RIGHTPAREN;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 35 "lexer.lex"
+#line 34 "lexer.lex"
 {return LEFTCURLY;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 36 "lexer.lex"
+#line 35 "lexer.lex"
 {return RIGHTCURLY;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 37 "lexer.lex"
+#line 36 "lexer.lex"
 {return LEFTBRACKET;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 38 "lexer.lex"
+#line 37 "lexer.lex"
 {return RIGHTBRACKET;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 39 "lexer.lex"
+#line 38 "lexer.lex"
 {return COMMA;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 40 "lexer.lex"
+#line 39 "lexer.lex"
 {return SEMICOLON;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 41 "lexer.lex"
+#line 40 "lexer.lex"
 {return PLUS;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 42 "lexer.lex"
+#line 41 "lexer.lex"
 {return SUBTRACT;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 43 "lexer.lex"
+#line 42 "lexer.lex"
 {return MULTIPLY;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 44 "lexer.lex"
+#line 43 "lexer.lex"
 {return DIVIDE;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 45 "lexer.lex"
+#line 44 "lexer.lex"
 {return MODULUS;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 46 "lexer.lex"
+#line 45 "lexer.lex"
 {return ASSIGN;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 47 "lexer.lex"
+#line 46 "lexer.lex"
 {return LESS;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 48 "lexer.lex"
+#line 47 "lexer.lex"
 {return LESSEQUAL;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 49 "lexer.lex"
+#line 48 "lexer.lex"
 {return GREATER;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 50 "lexer.lex"
+#line 49 "lexer.lex"
 {return GREATEREQUAL;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 51 "lexer.lex"
+#line 50 "lexer.lex"
 {return EQUALITY;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 52 "lexer.lex"
+#line 51 "lexer.lex"
 {return NOTEQUAL;}
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 53 "lexer.lex"
+#line 52 "lexer.lex"
 {}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 54 "lexer.lex"
+#line 53 "lexer.lex"
 {printf("Invalid identifier found: %s\n", yytext);}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 55 "lexer.lex"
+#line 54 "lexer.lex"
 {yylval.op_value = create_string(yytext, yyleng); return NUMBER;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 56 "lexer.lex"
+#line 55 "lexer.lex"
 {yylval.op_value = create_string(yytext, yyleng); return TOKEN_IDENTIFIER;}
 	YY_BREAK
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 57 "lexer.lex"
+#line 56 "lexer.lex"
 {}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 58 "lexer.lex"
+#line 57 "lexer.lex"
 {printf("Unrecognized character found  %s\n", yytext);}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 59 "lexer.lex"
+#line 58 "lexer.lex"
 ECHO;
 	YY_BREAK
 #line 1006 "lexer.yy.c"
@@ -1996,6 +1996,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 59 "lexer.lex"
+#line 58 "lexer.lex"
 
 

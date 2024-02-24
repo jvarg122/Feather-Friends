@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
+#include <string>
+#include <sstream>
 
 struct CodeNode {
   std::string code;
@@ -26,6 +28,16 @@ struct Function {
 };
 
 std::vector <Function> symbol_table;
+
+CodeNode *create_temporary_variable(){
+  struct CodeNode *temp = new CodeNode;
+  std::stringstream sstm;
+  sstm << "__temp" << tempval << "__";
+  temp->name = sstm.str();
+  temp->code = ". " + std::string(temp->name);
+  tempval++;
+  return temp;
+}
 
 // remember that Bison is a bottom up parser: that it parses leaf nodes first before
 // parsing the parent nodes. So control flow begins at the leaf grammar nodes
@@ -88,14 +100,6 @@ void print_symbol_table(void) {
   printf("--------------------\n");
 }
 
-CodeNode create_temporary_variable(void){
-  struct CodeNode *temp = new CodeNode;
-  temp.name = "__temp" + std::string(tempval++) + "__";
-  temp.code = ". " + std::string(temp.name);
-  return temp;
-}
-
-
 %}
 
 %union {
@@ -143,6 +147,7 @@ program: %empty {
                 struct CodeNode *function = $2;
                 struct CodeNode *node = new CodeNode;
                 node->code = program->code + function->code;
+                printf("%s", node->code.c_str());
                 $$ = node;
 }
 
@@ -173,7 +178,7 @@ new_parameter: type TOKEN_IDENTIFIER {
                 struct CodeNode *node = new CodeNode;
                 struct CodeNode *type = $1;
                 node->code = type->code;
-                node->code += std::string(". ") + std::string($2);
+                node->code += std::string(". ") + std::string($2) + std::string("\n");
                 $$ = node;
 }
             | type TOKEN_IDENTIFIER COMMA new_parameter {
@@ -181,7 +186,7 @@ new_parameter: type TOKEN_IDENTIFIER {
                 struct CodeNode *type = $1;
                 struct CodeNode *new_parameter = $4;
                 node->code = type->code;
-                node->code += std::string(". ") + std::string($2);
+                node->code += std::string(". ") + std::string($2) + std::string("\n");
                 node->code += new_parameter->code;
                 $$ = node;
 }
@@ -206,13 +211,13 @@ parameters: %empty {
 // x, y, z 
 parameter: TOKEN_IDENTIFIER {
                 struct CodeNode *node = new CodeNode;
-                node->code = "param " + std::string($1);
+                node->code = "param " + std::string($1) + std::string("\n");
                 $$ = node;
 
 }
         | TOKEN_IDENTIFIER COMMA parameter {
                 struct CodeNode *node = new CodeNode;
-                node->code = "param " + std::string($1);
+                node->code = "param " + std::string($1) + std::string("\n");
                 node->code += $3->code;
                 $$ = node;
 }
@@ -240,12 +245,12 @@ statement: new_variable {
 }
         | function_call {
                 struct CodeNode *node = new CodeNode;
-                node->code = $1->code + ";";
+                node->code = $1->code + ";" + std::string("\n");
                 $$ = node;
 }
         | print {
             struct CodeNode *node = new CodeNode;
-            node->code = "printf(\"%d\", " + $1->code + ");";
+            node->code = "printf(\"%d\", " + $1->code + ");" + std::string("\n");
             $$ = node;
 }
 
@@ -254,17 +259,25 @@ statement: new_variable {
 // ====================
         | RETURN TOKEN_IDENTIFIER SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string("return ") + std::string($2);
+                node->code = std::string("return ") + std::string($2) + std::string("\n");
                 $$ = node;
 }
         | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = "= " + std::string($1) + ", " + $3->code;
+                struct CodeNode *temp = create_temporary_variable();
+                node->code = temp->code + std::string("\n");
+                node->code += $3->code + std::string("\n");
+                node->code += "= " + std::string($1) + ", " + temp->name + std::string("\n");
+                $$ = node;
+}
+        | TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code += "= " + std::string($1) + ", " +  std::string($3) + std::string("\n");
                 $$ = node;
 }
         | BREAK SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string("break;");
+                node->code = std::string("break;") + std::string("\n");
                 $$ = node;
 }
         ;
@@ -273,13 +286,13 @@ statement: new_variable {
 // int x = 0;
 new_variable: type TOKEN_IDENTIFIER SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string(". ") + std::string($2);
+                node->code = std::string(". ") + std::string($2) + std::string("\n");
                 $$ = node;
 }
             | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 struct CodeNode *node = new CodeNode;
                 node->code = $1->code + ". " + std::string($2); 
-                node->code += "= " + std::string($2) + ", " + std::string($4);
+                node->code += "= " + std::string($2) + ", " + std::string($4) + std::string("\n");
                 $$ = node;
 }
             ;
@@ -291,7 +304,7 @@ type: INT {
 
 print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = "printf(\"%d\", " + std::string($3) + std::string(");");
+                node->code = "printf(\"%d\", " + std::string($3) + std::string(");") + std::string("\n");
                 $$ = node;
 }
 
@@ -300,7 +313,7 @@ function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
                 struct CodeNode *node = new CodeNode;
                 node->code = $3->code;
                 node->code += temp->code;
-                node->code += "call " + std::string($1) + ", " + temp->name);
+                node->code += "call " + std::string($1) + ", " + temp->name + std::string("\n");
                 $$ = node;
 }
 
@@ -332,39 +345,33 @@ expression: NUMBER {
                 $$ = node;
 }
           | expression PLUS expression {
-                // store result in temp variable
                 struct CodeNode *temp = create_temporary_variable();
-                struct CodeNode *node = new CodeNode
-                node->code = temp->code;
-                node->code += "+ " + temp->name + ", " + $1->code + ", " + $3->code;
+                struct CodeNode *node = new CodeNode;
+                node->code = "+ " + temp->name + ", " + $1->code + ", " + $3->code + std::string("\n");
                 $$ = node;
 }
           | expression SUBTRACT expression {
                 struct CodeNode *temp = create_temporary_variable();
-                struct CodeNode *node = new CodeNode
-                node->code = temp->code;
-                node->code = "- " + temp->name + ", " + $1->code + ", " + $3->code;
+                struct CodeNode *node = new CodeNode;
+                node->code = "- " + temp->name + ", " + $1->code + ", " + $3->code + std::string("\n");
                 $$ = node;
 }
           | expression MULTIPLY expression {
                 struct CodeNode *temp = create_temporary_variable();
-                struct CodeNode *node = new CodeNode
-                node->code = temp->code;
-                node->code = "* " + temp->name + ", " + $1->code + ", " + $3->code;
+                struct CodeNode *node = new CodeNode;
+                node->code = "* " + temp->name + ", " + $1->code + ", " + $3->code + std::string("\n");
                 $$ = node;
 }
           | expression DIVIDE expression {
                 struct CodeNode *temp = create_temporary_variable();
-                struct CodeNode *node = new CodeNode
-                node->code = temp->code;
-                node->code = "/ " + temp->name + ", " + $1->code + ", " + $3->code;
+                struct CodeNode *node = new CodeNode;
+                node->code = "/ " + temp->name + ", " + $1->code + ", " + $3->code + std::string("\n");
                 $$ = node;
 }
           | expression MODULUS expression {
                 struct CodeNode *temp = create_temporary_variable();
-                struct CodeNode *node = new CodeNode
-                node->code = temp->code;
-                node->code = "% " + temp->name + ", " + $1->code + ", " + $3->code;
+                struct CodeNode *node = new CodeNode;
+                node->code = "% " + temp->name + ", " + $1->code + ", " + $3->code + std::string("\n");
                 $$ = node;
 
 }
