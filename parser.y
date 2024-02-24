@@ -140,6 +140,10 @@ void print_symbol_table(void) {
 %type <code_node> parameters
 %type <code_node> parameter
 %type <code_node> type
+%type <code_node> new_array
+%type <code_node> array_get_pointer
+%type <code_node> variable
+
 
 %start program
 
@@ -250,6 +254,11 @@ statement: new_variable {
                 node->code = $1->code;
                 $$ = node;
 }
+        | new_array {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code;
+                $$ = node;
+}
         | function_call {
                 struct CodeNode *node = new CodeNode;
                 node->code = $1->code;
@@ -286,16 +295,30 @@ statement: new_variable {
                 $$ = node;
 }
         | BREAK SEMICOLON {
+                // TODO
                 struct CodeNode *node = new CodeNode;
                 node->code = std::string("TODO: break") + std::string("\n");
                 $$ = node;
 }
         | CONTINUE SEMICOLON {
+                // TODO
                 struct CodeNode *node = new CodeNode;
                 node->code = std::string("TODO: continue") + std::string("\n");
                 $$ = node;
 }
         ;
+
+new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON {
+                // TODO
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+
+array_get_pointer: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET {
+                // TODO
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
 
 assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 struct CodeNode *node = new CodeNode;
@@ -308,6 +331,11 @@ assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 node->code += $3->code;
                 node->code += "= " + std::string($1) + ", " + currentTemp->name + std::string("\n");
                 $$ = node;
+} 
+        | array_get_pointer ASSIGN expressions SEMICOLON {
+                // TODO
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
 }
         ;
 
@@ -319,16 +347,19 @@ return_statement: RETURN TOKEN_IDENTIFIER SEMICOLON {
         ;
 
 if_statement: IF LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY else_statement {
+                // TODO
                 struct CodeNode *node = new CodeNode;
                 $$ = node;
 }
         | IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statement {
+                // TODO
                 struct CodeNode *node = new CodeNode;
                 $$ = node;
 }
         ;
 
 else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
+                // TODO
                 struct CodeNode *node = new CodeNode;
                 $$ = node;
 }
@@ -339,10 +370,12 @@ else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
              ;
 
 while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
+                // TODO
                 struct CodeNode *node = new CodeNode;
                 $$ = node;
 }
         | WHILE LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
+                // TODO
                 struct CodeNode *node = new CodeNode;
                 $$ = node;
 }
@@ -398,15 +431,36 @@ new_variable: type TOKEN_IDENTIFIER SEMICOLON {
 }
             ;
 
+
+variable: NUMBER {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1);
+                $$ = node;
+}
+          | TOKEN_IDENTIFIER {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string($1);
+                $$ = node;
+}
+          | array_get_pointer {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+          | function_call {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+          ;
+
 type: INT {
                 struct CodeNode *node = new CodeNode;
                 $$ = node;
 }
             ;
 
-print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
+print: PRINT LEFTPAREN variable RIGHTPAREN SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = ".> " + std::string($3) + std::string("\n");
+                node->code += ".> " + $3->code + std::string("\n");
                 $$ = node;
 }
             ;
@@ -435,14 +489,9 @@ expressions: %empty {
 }
            ;
 
-expression: NUMBER {
+expression: variable {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string($1);
-                $$ = node;
-}
-          | TOKEN_IDENTIFIER {
-                struct CodeNode *node = new CodeNode;
-                node->code = std::string($1);
+                node->code = $1->code;
                 $$ = node;
 }
           | expression PLUS expression {
