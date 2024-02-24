@@ -308,10 +308,13 @@ statement: new_variable {
 }
         ;
 
-new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON {
-                // TODO
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
+if_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statement {
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_label();
+		node->code += temp->code;
+                node->code = std::string("?:= ") + temp->name + std::string(", ") + std::string($2);
+		$$ = node;
+ 
 }
 
 array_get_pointer: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET {
@@ -359,9 +362,11 @@ if_statement: IF LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements R
         ;
 
 else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
-                // TODO
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_label();
+		node->code += temp->code;
+                node->code = std::string(":= ") + temp->name;
+		$$ = node;
 }
              | %empty {
                 struct CodeNode *node = new CodeNode;
@@ -370,9 +375,12 @@ else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
              ;
 
 while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
-                // TODO
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_label();
+		node->code += temp->code;
+                node->code = std::string("?:= ") + temp->name + std::string(", ") + std::string($2);
+		$$ = node;
+ 
 }
         | WHILE LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
                 // TODO
@@ -382,34 +390,53 @@ while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
         ;
 
 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
-}
+		struct CodeNode *node = new CodeNode;
+                node->code = std::string(".< ") + std::string($3);
+		$$ = node;
+			}
 
 boolean_expressions: expression GREATER expression {
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
-}
-            | expression LESS expression {
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
-}
-            | expression LESSEQUAL expression {
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
-}
-            | expression GREATEREQUAL expression {
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
-}
-            | expression EQUALITY expression {
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
-}
-            | expression NOTEQUAL expression {
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
-}
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_temporary_variable();
+		node->code += temp->code;
+                node->code = std::string("> ") + temp->name + std::string(", ") + $1->code + std::string(", ") + $3->code;
+                $$ = node;		
+			}
+                   | expression LESS expression {
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_temporary_variable();
+		node->code += temp->code;
+                node->code = std::string("< ") + temp->name + std::string(", ") + $1->code + std::string(", ") + $3->code;
+                $$ = node;		
+			}
+                   | expression LESSEQUAL expression {
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_temporary_variable();
+		node->code += temp->code;
+                node->code = std::string("<= ") + temp->name + std::string(", ") + $1->code + std::string(", ") + $3->code;
+                $$ = node;		
+			}
+                   | expression GREATEREQUAL expression {
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_temporary_variable();
+		node->code += temp->code;
+                node->code = std::string(">= ") + temp->name + std::string(", ") + $1->code + std::string(", ") + $3->code;
+                $$ = node;		
+			}
+                   | expression EQUALITY expression {
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_temporary_variable();
+		node->code += temp->code;
+                node->code = std::string("= ") + temp->name + std::string(", ") + $1->code + std::string(", ") + $3->code;
+                $$ = node;		
+			}
+                   | expression NOTEQUAL expression {
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_temporary_variable();
+		node->code += temp->code;
+                node->code = std::string("!= ") + temp->name + std::string(", ") + $1->code + std::string(", ") + $3->code;
+                $$ = node;		
+			}
                    ;
 
 new_variable: type TOKEN_IDENTIFIER SEMICOLON {
