@@ -63,21 +63,20 @@ extern int yydebug;
     MODULUS = 273,
     ASSIGN = 274,
     READ = 275,
-    WRITE = 276,
-    WHILE = 277,
-    IF = 278,
-    ELSE = 279,
-    CONTINUE = 280,
-    LEFTBRACKET = 281,
-    RIGHTBRACKET = 282,
-    LESS = 283,
-    LESSEQUAL = 284,
-    GREATER = 285,
-    GREATEREQUAL = 286,
-    EQUALITY = 287,
-    NOTEQUAL = 288,
-    NUMBER = 289,
-    TOKEN_IDENTIFIER = 290
+    WHILE = 276,
+    IF = 277,
+    ELSE = 278,
+    CONTINUE = 279,
+    LEFTBRACKET = 280,
+    RIGHTBRACKET = 281,
+    LESS = 282,
+    LESSEQUAL = 283,
+    GREATER = 284,
+    GREATEREQUAL = 285,
+    EQUALITY = 286,
+    NOTEQUAL = 287,
+    NUMBER = 288,
+    TOKEN_IDENTIFIER = 289
   };
 #endif
 
@@ -91,7 +90,7 @@ union YYSTYPE
   char *op_value;
   struct CodeNode *code_node;
 
-#line 95 "parser.tab.h" /* yacc.c:1909  */
+#line 94 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -21,7 +21,6 @@ INVALIDIDENTIFIER [0-9]+{IDENTIFIER}
 "egg"                       {return INT;}
 "squawk"                    {return PRINT;}
 "survey"                    {return READ;}
-"peck"                      {return WRITE;}
 "nest"                      {return WHILE;}
 "fly"                       {return IF;}
 "land"                      {return ELSE;}

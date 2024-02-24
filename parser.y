@@ -113,10 +113,11 @@ void print_symbol_table(void) {
 
 %token FUNC RETURN INT PRINT BREAK LEFTPAREN RIGHTPAREN LEFTCURLY RIGHTCURLY 
 %token COMMA SEMICOLON PLUS SUBTRACT MULTIPLY DIVIDE MODULUS ASSIGN
-%token READ WRITE WHILE IF ELSE CONTINUE LEFTBRACKET RIGHTBRACKET
+%token READ WHILE IF ELSE CONTINUE LEFTBRACKET RIGHTBRACKET
 %token LESS LESSEQUAL GREATER GREATEREQUAL EQUALITY NOTEQUAL
 %token <op_value> NUMBER
 %token <op_value> TOKEN_IDENTIFIER
+%type <op_value> function_header
 
 %type <code_node> program
 %type <code_node> function
@@ -124,9 +125,16 @@ void print_symbol_table(void) {
 %type <code_node> new_parameter
 %type <code_node> statements
 %type <code_node> statement
+%type <code_node> return_statement
+%type <code_node> assign_statement
+%type <code_node> if_statement
+%type <code_node> else_statement
+%type <code_node> while_statement
+%type <code_node> read_statement
 %type <code_node> new_variable
 %type <code_node> print
 %type <code_node> function_call
+%type <code_node> boolean_expressions
 %type <code_node> expressions
 %type <code_node> expression
 %type <code_node> parameters
@@ -136,10 +144,6 @@ void print_symbol_table(void) {
 %start program
 
 %%
-
-// ====================
-// TODO: Dalton Witt
-// ====================
 program: %empty {
         struct CodeNode *node = new CodeNode;
         $$ = node;
@@ -154,11 +158,17 @@ program: %empty {
                 $$ = node;
 }
 
-function: FUNC TOKEN_IDENTIFIER LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
+function_header: FUNC TOKEN_IDENTIFIER {
+        std::string function_name = $2;
+        add_function_to_symbol_table(function_name);
+        $$ = $2;
+}
+
+function: function_header LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
         struct CodeNode *node = new CodeNode;
-        struct CodeNode *new_parameters = $4;
-        struct CodeNode *statements = $7;
-        node->code = std::string("func ") + std::string($2) + std::string("\n");
+        struct CodeNode *new_parameters = $3;
+        struct CodeNode *statements = $6;
+        node->code = std::string("func ") + std::string($1) + std::string("\n");
         node->code += new_parameters->code;
         node->code += statements->code;
         node->code += std::string("endfunc\n\n");
@@ -175,9 +185,10 @@ new_parameters: %empty {
 }
           ;
 
-// int x
-// int x, int y
 new_parameter: type TOKEN_IDENTIFIER {
+                std::string variable_name = $2;
+                add_variable_to_symbol_table(variable_name, Integer);
+
                 struct CodeNode *node = new CodeNode;
                 struct CodeNode *type = $1;
                 node->code = type->code;
@@ -185,6 +196,9 @@ new_parameter: type TOKEN_IDENTIFIER {
                 $$ = node;
 }
             | type TOKEN_IDENTIFIER COMMA new_parameter {
+                std::string variable_name = $2;
+                add_variable_to_symbol_table(variable_name, Integer);
+
                 struct CodeNode *node = new CodeNode;
                 struct CodeNode *type = $1;
                 struct CodeNode *new_parameter = $4;
@@ -195,12 +209,8 @@ new_parameter: type TOKEN_IDENTIFIER {
 }
             ;
 
-// ====================
-// TODO: Josue
-// ====================
 parameters: %empty {
                 struct CodeNode *node = new CodeNode;
-                node->code = "";
                 $$ = node;
 }
           | parameter {
@@ -210,8 +220,6 @@ parameters: %empty {
 }
           ;
 
-// x
-// x, y, z 
 parameter: TOKEN_IDENTIFIER {
                 struct CodeNode *node = new CodeNode;
                 node->code = "param " + std::string($1) + std::string("\n");
@@ -228,7 +236,6 @@ parameter: TOKEN_IDENTIFIER {
 
 statements: %empty {
                 struct CodeNode *node = new CodeNode;
-                node->code = "";
                 $$ = node;
 }
           | statements statement {
@@ -238,13 +245,10 @@ statements: %empty {
 }
           ;
 
-// a = b;
-// return a;
-// int x;
-// int x = 0;
-// x = y + 1
 statement: new_variable {
-
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code;
+                $$ = node;
 }
         | function_call {
                 struct CodeNode *node = new CodeNode;
@@ -252,29 +256,33 @@ statement: new_variable {
                 $$ = node;
 }
         | print {
-            struct CodeNode *node = new CodeNode;
-            node->code = $1->code;
-            $$ = node;
-}
-
-// ====================
-// TODO: Jen Hua
-// ====================
-        | RETURN TOKEN_IDENTIFIER SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string("return ") + std::string($2) + std::string("\n");
+                node->code = $1->code;
                 $$ = node;
 }
-        | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {
+        | if_statement {
                 struct CodeNode *node = new CodeNode;
-                node->code = currentTemp->code + std::string("\n");
-                node->code += $3->code;
-                node->code += "= " + std::string($1) + ", " + currentTemp->name + std::string("\n");
+                node->code = $1->code;
                 $$ = node;
 }
-        | TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
+        | while_statement {
                 struct CodeNode *node = new CodeNode;
-                node->code += "= " + std::string($1) + ", " +  std::string($3) + std::string("\n");
+                node->code = $1->code;
+                $$ = node;
+}
+        | read_statement {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code;
+                $$ = node;
+}
+        | return_statement {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code;
+                $$ = node;
+}
+        | assign_statement {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code;
                 $$ = node;
 }
         | BREAK SEMICOLON {
@@ -287,44 +295,102 @@ statement: new_variable {
                 node->code = std::string("TODO: continue") + std::string("\n");
                 $$ = node;
 }
-        | if_statement {printf("statement -> if_statement\n");}
-        | while_statement {printf("statement -> while_statement\n");}
-        | read_statement {printf("statement -> read_statement\n");}
-        | write_statement {printf("statement -> write_statement\n");}
         ;
 
-if_statement: IF LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY else_statement {printf("statement -> IF LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statement RIGHTCURLY else_statement\n");}
-        | IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statement {printf("statement -> IF boolean_expressions LEFTCURLY statement RIGHTCURLY else_statement\n");}
+assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code += "= " + std::string($1) + ", " +  std::string($3) + std::string("\n");
+                $$ = node;
+}
+        | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code = currentTemp->code + std::string("\n");
+                node->code += $3->code;
+                node->code += "= " + std::string($1) + ", " + currentTemp->name + std::string("\n");
+                $$ = node;
+}
         ;
 
-else_statement: ELSE LEFTCURLY statement RIGHTCURLY {printf("else_statement -> ELSE LEFTCURLY statement RIGHTCURLY\n");}
-             | %empty {printf("else_statement -> epsilon\n");}
+return_statement: RETURN TOKEN_IDENTIFIER SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                node->code = std::string("ret ") + std::string($2) + std::string("\n");
+                $$ = node;
+}
+        ;
+
+if_statement: IF LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY else_statement {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+        | IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statement {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+        ;
+
+else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+             | %empty {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
              ;
 
-while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {printf("statement -> WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY\n");}
-        | WHILE LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY {printf("statement -> WHILE LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY\n");}
+while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+        | WHILE LEFTPAREN boolean_expressions RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
         ;
 
-read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {printf("read_statement -> READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON\n");}
+read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
 
-write_statement: WRITE LEFTPAREN expressions RIGHTPAREN SEMICOLON {printf("write_statement -> WRITE LEFTPAREN expressions RIGHTPAREN SEMICOLON\n");}
-
-boolean_expressions: expression GREATER expression {printf("boolean_expressions -> expression GREATER expression\n");}
-                   | expression LESS expression {printf("boolean_expressions -> expression LESS expression\n");}
-                   | expression LESSEQUAL expression {printf("boolean_expressions -> expression LESSEQUAL expression\n");}
-                   | expression GREATEREQUAL expression {printf("boolean_expressions -> expression GREATEREQUAL expression\n");}
-                   | expression EQUALITY expression {printf("boolean_expressions -> expression EQUALITY expression\n");}
-                   | expression NOTEQUAL expression {printf("boolean_expressions -> expression NOTEQUAL expression\n");}
+boolean_expressions: expression GREATER expression {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+            | expression LESS expression {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+            | expression LESSEQUAL expression {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+            | expression GREATEREQUAL expression {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+            | expression EQUALITY expression {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
+            | expression NOTEQUAL expression {
+                struct CodeNode *node = new CodeNode;
+                $$ = node;
+}
                    ;
 
-// int x;
-// int x = 0;
 new_variable: type TOKEN_IDENTIFIER SEMICOLON {
+                std::string variable_name = $2;
+                add_variable_to_symbol_table(variable_name, Integer);
+
                 struct CodeNode *node = new CodeNode;
                 node->code = std::string(". ") + std::string($2) + std::string("\n");
                 $$ = node;
 }
             | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
+                std::string variable_name = $2;
+                add_variable_to_symbol_table(variable_name, Integer);
+                
                 struct CodeNode *node = new CodeNode;
                 node->code = $1->code + ". " + std::string($2); 
                 node->code += "= " + std::string($2) + ", " + std::string($4) + std::string("\n");
@@ -336,12 +402,14 @@ type: INT {
                 struct CodeNode *node = new CodeNode;
                 $$ = node;
 }
+            ;
 
 print: PRINT LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
                 struct CodeNode *node = new CodeNode;
                 node->code = ".> " + std::string($3) + std::string("\n");
                 $$ = node;
 }
+            ;
 
 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
                 struct CodeNode *temp = create_temporary_variable();
@@ -351,10 +419,8 @@ function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
                 node->code += "call " + std::string($1) + ", " + temp->name + std::string("\n");
                 $$ = node;
 }
+            ;
 
-// ====================
-// TODO: Alejandro
-// ====================
 expressions: %empty {
                 struct CodeNode *node = new CodeNode;
                 $$ = node;
