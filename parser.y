@@ -309,12 +309,16 @@ statement: new_variable {
         ;
 
 if_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statement {
-		struct CodeNode *node = new CodeNode;
-		//struct CodeNode *temp = create_label();
-		//node->code = temp->code;
-    //node->code += std::string("?:= ") + temp->name + std::string(", ") + std::string($2);
-		$$ = node;
- 
+    struct CodeNode *node = new CodeNode;
+    struct CodeNode *if_label = create_temporary_variable(); 
+    struct CodeNode *else_label = create_temporary_variable(); 
+    node->code += $2->code;
+    node->code += std::string("?:= ") + if_label->name + ", " + else_label->name + "\n";
+    node->code += $4->code;
+    node->code += std::string(":") + if_label->name + "\n";
+    node->code += $6->code;
+    node->code += std::string(":") + else_label->name + "\n";
+    $$ = node;
 }
 
 new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON {
@@ -357,12 +361,11 @@ return_statement: RETURN TOKEN_IDENTIFIER SEMICOLON {
         ;
 
 else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
-    // TODO: finish
-		struct CodeNode *node = new CodeNode;
-		//struct CodeNode *temp = create_label();
-		//node->code = temp->code;
-    //node->code += std::string(":= ") + temp->name;
-		$$ = node;
+                struct CodeNode *node = new CodeNode;
+                struct CodeNode *else_label = create_temporary_variable();
+                node->code += ":=" + else_label->name + "\n"; 
+                node->code += $3->code; 
+                $$ = node;
 }
              | %empty {
                 struct CodeNode *node = new CodeNode;
@@ -371,7 +374,7 @@ else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
              ;
 
 while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
-    // TODO: finish
+        // TODO: finish
 		struct CodeNode *node = new CodeNode;
 		//struct CodeNode *temp = create_label();
 		//node->code = temp->code;
