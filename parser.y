@@ -374,13 +374,16 @@ else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
              ;
 
 while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
-        // TODO: finish
-		struct CodeNode *node = new CodeNode;
-		//struct CodeNode *temp = create_label();
-		//node->code = temp->code;
-    //node->code += std::string("?:= ") + temp->name + std::string(", ") + std::string($2);
-		$$ = node;
- 
+struct CodeNode *node = new CodeNode;
+    struct CodeNode *begin_loop_label = create_temporary_variable();
+    struct CodeNode *end_loop_label = create_temporary_variable();
+    node->code += ":" + begin_loop_label->name + "\n";
+    node->code += $2->code; 
+    node->code += "?:= " + end_loop_label->name + ", " + $2->name + "\n";
+    node->code += $4->code; 
+    node->code += ":= " + begin_loop_label->name + "\n";
+    node->code += ":" + end_loop_label->name + "\n";
+    $$ = node;
 }
         ;
 
