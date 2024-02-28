@@ -30,6 +30,7 @@ struct WhileLoop{
 };
 
 int yylex();
+extern int yylineno;
 void yyerror(const char *s);
 int tempval = 0;
 int labelval = 0;
@@ -107,7 +108,7 @@ void add_function_to_symbol_table(std::string &value) {
 // the symbol name as well as some type information to the symbol table
 void add_variable_to_symbol_table(std::string &value, Type t) {
   if(symbol_table.size() != 0 && find(value)){
-        yyerror("Duplicate Variable");
+        //yyerror("Duplicate Variable tried to be added to the symbol table");
   }
 
   Symbol s;
@@ -131,12 +132,44 @@ void print_symbol_table(void) {
   printf("--------------------\n");
 }
 
+// ERROR HANDLING FUNCTIONS
+void errchk_duplicate_variable(std::string variable_name) {
+    if(find(variable_name)) {
+        yyerror(std::string("Duplicate variable: " + variable_name).c_str());
+    }
+}
+
+void errchk_duplicate_function(std::string function_name) {
+    if(find(function_name)) {
+        yyerror(std::string("Duplicate function: " + function_name).c_str());
+    }
+}
+
+void errchk_using_undeclared_variable(std::string variable_name) {
+    if(!find(variable_name)) {
+        yyerror(std::string("Tried to access variable that doesn't exist: " + variable_name).c_str());
+    }
+}
+
+void errchk_using_undeclared_function(std::string function_name) {
+    /*
+    if() {
+        Function *f = get_function();
+    }
+    if(!find(function_name)) {
+        yyerror(std::string("Tried to call a function that doesn't exist: " + function_name).c_str());
+    }
+    */
+}
+
 %}
 
 %union {
   char *op_value;
   struct CodeNode *code_node;
 }
+
+%locations
 
 %define parse.error verbose
 
@@ -193,6 +226,7 @@ program: %empty {
 
 function_header: FUNC TOKEN_IDENTIFIER {
         std::string function_name = $2;
+        errchk_duplicate_function(function_name);
         add_function_to_symbol_table(function_name);
         $$ = $2;
 }
@@ -220,6 +254,7 @@ new_parameters: %empty {
 
 new_parameter: type TOKEN_IDENTIFIER {
                 std::string variable_name = $2;
+                errchk_duplicate_variable(variable_name);
                 add_variable_to_symbol_table(variable_name, Integer);
 
                 struct CodeNode *node = new CodeNode;
@@ -230,6 +265,7 @@ new_parameter: type TOKEN_IDENTIFIER {
 }
             | type TOKEN_IDENTIFIER COMMA new_parameter {
                 std::string variable_name = $2;
+                errchk_duplicate_variable(variable_name);
                 add_variable_to_symbol_table(variable_name, Integer);
 
                 struct CodeNode *node = new CodeNode;
@@ -255,9 +291,7 @@ parameters: %empty {
 
 parameter: TOKEN_IDENTIFIER {
                 std::string variable_name = std::string($1);
-                if(!find(variable_name)) {
-                        yyerror("Tried to access variable that doesn't exist.");
-                }
+                errchk_using_undeclared_variable(variable_name);
         
                 struct CodeNode *node = new CodeNode;
                 node->code = "param " + std::string($1) + std::string("\n");
@@ -266,9 +300,7 @@ parameter: TOKEN_IDENTIFIER {
 }
         | TOKEN_IDENTIFIER COMMA parameter {
                 std::string variable_name = std::string($1);
-                if(!find(variable_name)) {
-                        yyerror("Tried to access variable that doesn't exist.");
-                }
+                errchk_using_undeclared_variable(variable_name);
 
                 struct CodeNode *node = new CodeNode;
                 node->code = "param " + std::string($1) + std::string("\n");
@@ -361,6 +393,7 @@ if_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statem
 
 new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON {
                 std::string variable_name = $5;
+                errchk_duplicate_variable(variable_name);
                 add_variable_to_symbol_table(variable_name, Array);
 
                 struct CodeNode *node = new CodeNode;
@@ -372,6 +405,8 @@ new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON {
 
 array_get_pointer: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET {
                 // array[1]
+                std::string variable_name = $1;
+                errchk_using_undeclared_variable(variable_name);
                 struct CodeNode *node = new CodeNode;
                 struct CodeNode *temp = create_temporary_variable();
                 node->code = "=[] " + temp->name + ", " + std::string($1) + ", " + std::string($3) + "\n";
@@ -379,11 +414,17 @@ array_get_pointer: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET {
 }
 
 assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
+                std::string variable_name = $1;
+                errchk_using_undeclared_variable(variable_name);
+
                 struct CodeNode *node = new CodeNode;
                 node->code += "= " + std::string($1) + ", " +  std::string($3) + "\n";
                 $$ = node;
 }
         | TOKEN_IDENTIFIER ASSIGN expressions SEMICOLON {
+                std::string variable_name = $1;
+                errchk_using_undeclared_variable(variable_name);
+                
                 struct CodeNode *node = new CodeNode;
                 node->code = currentTemp->code + std::string("\n");
                 node->code += $3->code;
@@ -391,6 +432,9 @@ assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 $$ = node;
 } 
         | TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN NUMBER SEMICOLON {
+                std::string variable_name = $1;
+                errchk_using_undeclared_variable(variable_name);
+                
                 // []= dst, index, src
                 // dst[index] = src (index and src are both immediates)
                 struct CodeNode *node = new CodeNode;
@@ -398,6 +442,9 @@ assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 $$ = node;
 }
         | TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN expressions SEMICOLON {
+                std::string variable_name = $1;
+                errchk_using_undeclared_variable(variable_name);
+                
                 // []= dst, index, src
                 // dst[index] = src (index is an immediate, src is an expression)
 
@@ -411,6 +458,9 @@ assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
         ;
 
 return_statement: RETURN TOKEN_IDENTIFIER SEMICOLON {
+                std::string variable_name = $2;
+                errchk_using_undeclared_variable(variable_name);
+                
                 struct CodeNode *node = new CodeNode;
                 node->code = std::string("ret ") + std::string($2) + std::string("\n");
                 $$ = node;
@@ -450,6 +500,9 @@ while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
         ;
 
 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
+                std::string variable_name = $3;
+                errchk_using_undeclared_variable(variable_name);
+                
 		      struct CodeNode *node = new CodeNode;
           node->code = std::string(".< ") + std::string($3);
 		      $$ = node;
@@ -525,6 +578,7 @@ boolean_expressions: expression GREATER expression {
 
 new_variable: type TOKEN_IDENTIFIER SEMICOLON {
                 std::string variable_name = $2;
+                errchk_duplicate_variable(variable_name);
                 add_variable_to_symbol_table(variable_name, Integer);
 
                 struct CodeNode *node = new CodeNode;
@@ -533,6 +587,7 @@ new_variable: type TOKEN_IDENTIFIER SEMICOLON {
 }
             | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 std::string variable_name = $2;
+                errchk_duplicate_variable(variable_name);
                 add_variable_to_symbol_table(variable_name, Integer);
                 
                 struct CodeNode *node = new CodeNode;
@@ -551,9 +606,7 @@ variable: NUMBER {
 }
           | TOKEN_IDENTIFIER {
                 std::string variable_name = std::string($1);
-                if(!find(variable_name)) {
-                        yyerror("Tried to access variable that doesn't exist.");
-                }
+                errchk_using_undeclared_variable(variable_name);
 
                 struct CodeNode *node = new CodeNode;
                 //node->code = std::string($1);
@@ -591,6 +644,9 @@ print: PRINT LEFTPAREN variable RIGHTPAREN SEMICOLON {
             ;
 
 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
+                std::string function_name = $1;
+                errchk_using_undeclared_function(function_name);
+
                 struct CodeNode *temp = create_temporary_variable();
                 struct CodeNode *node = new CodeNode;
                 node->code = $3->code;
@@ -674,8 +730,7 @@ int main(void) {
 }
 
 void yyerror(const char *s) {
-  printf("Error: %s\n", s);
+  fprintf(stderr,"Error | Line: %d\n%s\n",yylineno,s);
 }
-
 
 

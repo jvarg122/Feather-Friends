@@ -9,6 +9,8 @@ char *create_string(char *text, int len) {
 }
 %}
 
+%option yylineno
+
 DIGIT [0-9]
 ALPHA [a-zA-Z]
 IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
