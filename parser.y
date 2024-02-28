@@ -17,6 +17,7 @@ void yyerror(const char *s);
 enum Type { Integer, Array };
 int tempval = 0;
 CodeNode *currentTemp;
+WhileLoop *currentWhileLoop;
 
 struct Symbol {
   std::string name;
@@ -53,6 +54,11 @@ Function *get_function() {
     exit(1);
   }
   return &symbol_table[last];
+}
+
+struct WhileLoop{
+        CodeNode *beginLabel;
+        CodeNode *endLabel;
 }
 
 // find a particular variable using the symbol table.
@@ -295,15 +301,13 @@ statement: new_variable {
                 $$ = node;
 }
         | BREAK SEMICOLON {
-                // TODO
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string("TODO: break") + std::string("\n");
+                node->code = std::string(":= end") + currentWhileLoop->endlabel;
                 $$ = node;
 }
         | CONTINUE SEMICOLON {
-                // TODO
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string("TODO: continue") + std::string("\n");
+                node->code = std::string(":= end") + currentWhileLoop->beginlabel;
                 $$ = node;
 }
         ;
