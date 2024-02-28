@@ -439,7 +439,7 @@ while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
     loop->endLabel = end_loop_label;
     currentWhileLoop = loop;
 
-    node->code += ":" + begin_loop_label->name + "\n";
+    node->code = ":" + begin_loop_label->name + "\n";
     node->code += $2->code; 
     node->code += "?:= " + end_loop_label->name + ", " + $2->name + "\n";
     node->code += $4->code; 

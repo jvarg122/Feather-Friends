@@ -1872,7 +1872,7 @@ yyreduce:
     loop->endLabel = end_loop_label;
     currentWhileLoop = loop;
 
-    node->code += ":" + begin_loop_label->name + "\n";
+    node->code = ":" + begin_loop_label->name + "\n";
     node->code += (yyvsp[-3].code_node)->code; 
     node->code += "?:= " + end_loop_label->name + ", " + (yyvsp[-3].code_node)->name + "\n";
     node->code += (yyvsp[-1].code_node)->code; 
