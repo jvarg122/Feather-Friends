@@ -31,6 +31,6 @@ chirp main() {
   V Complex Expression. (4 + 2) * 7
   a = 4;
   b = 7;
-  c = (a + 2) * b;
+  c = (a + b) * 7;
   squawk(c);
 }

@@ -1,0 +1,35 @@
+func main
+. a
+. b
+. c
+= a, 100
+= b, 50
+. __temp0__
++ __temp0__, a, b
+= c, __temp0__
+.> __temp0__
+. __temp1__
+- __temp1__, a, b
+= c, __temp1__
+.> __temp1__
+. __temp2__
+* __temp2__, a, b
+= c, __temp2__
+.> __temp2__
+. __temp3__
+/ __temp3__, a, b
+= c, __temp3__
+.> __temp3__
+. __temp4__
+% __temp4__, a, b
+= c, __temp4__
+.> __temp4__
+= a, 4
+= b, 7
+. __temp5__
++ __temp5__, a, b
+. __temp6__
+* __temp6__, __temp5__, 7
+= c, __temp6__
+.> __temp6__
+endfunc

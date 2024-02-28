@@ -140,9 +140,11 @@ void errchk_duplicate_variable(std::string variable_name) {
 }
 
 void errchk_duplicate_function(std::string function_name) {
+    /*
     if(find(function_name)) {
         yyerror(std::string("Duplicate function: " + function_name).c_str());
     }
+    */
 }
 
 void errchk_using_undeclared_variable(std::string variable_name) {
@@ -426,7 +428,6 @@ assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 errchk_using_undeclared_variable(variable_name);
                 
                 struct CodeNode *node = new CodeNode;
-                node->code = currentTemp->code + std::string("\n");
                 node->code += $3->code;
                 node->code += "= " + std::string($1) + ", " + currentTemp->name + std::string("\n");
                 $$ = node;
@@ -682,6 +683,7 @@ expression: variable {
                 node->code = $1->code;
                 node->code += $3->code;
                 node->name = currentTemp->name;
+                node->code += temp->code + "\n";;
                 node->code += "+ " + temp->name + ", " + $1->name + ", " + $3->name + std::string("\n");
                 $$ = node;
 }
@@ -691,7 +693,8 @@ expression: variable {
                 node->code = $1->code;
                 node->code += $3->code;
                 node->name = currentTemp->name;
-                node->code = "- " + temp->name + ", " + $1->name + ", " + $3->name + std::string("\n");
+                node->code += temp->code + "\n";;
+                node->code += "- " + temp->name + ", " + $1->name + ", " + $3->name + std::string("\n");
                 $$ = node;
 }
           | expression MULTIPLY expression {
@@ -700,7 +703,8 @@ expression: variable {
                 node->code = $1->code;
                 node->code += $3->code;
                 node->name = currentTemp->name;
-                node->code = "* " + temp->name + ", " + $1->name + ", " + $3->name + std::string("\n");
+                node->code += temp->code + "\n";;
+                node->code += "* " + temp->name + ", " + $1->name + ", " + $3->name + std::string("\n");
                 $$ = node;
 }
           | expression DIVIDE expression {
@@ -709,7 +713,8 @@ expression: variable {
                 node->code = $1->code;
                 node->code += $3->code;
                 node->name = currentTemp->name;
-                node->code = "/ " + temp->name + ", " + $1->name + ", " + $3->name + std::string("\n");
+                node->code += temp->code + "\n";;
+                node->code += "/ " + temp->name + ", " + $1->name + ", " + $3->name + std::string("\n");
                 $$ = node;
 }
           | expression MODULUS expression {
@@ -718,10 +723,16 @@ expression: variable {
                 node->code = $1->code;
                 node->code += $3->code;
                 node->name = currentTemp->name;
-                node->code = "% " + temp->name + ", " + $1->name + ", " + $3->name + std::string("\n");
+                node->code += temp->code + "\n";
+                node->code += "% " + temp->name + ", " + $1->name + ", " + $3->name + std::string("\n");
                 $$ = node;
 
-}
+}         | LEFTPAREN expression RIGHTPAREN {
+                struct CodeNode *node = new CodeNode;
+                node->code = $2->code;
+                node->name = $2->name;
+                $$ = node;
+          }
           ;
 %%
 

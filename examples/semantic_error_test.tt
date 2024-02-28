@@ -4,17 +4,15 @@ V This program should output '150'
 V TODO: add semantic errors here
 
 chirp main() {
-  egg a;
-  egg b;
-  a = 100;
-
   V Using a variable without having first declared it.
   f = 10;
 
   V Calling a function which has not been defined.
+  V TODO: finish
   thisDoesNotExist();
 
   V Not defining a main function.
+  V TODO: finish
 
 
   V Defining a variable more than once.
@@ -22,21 +20,20 @@ chirp main() {
   egg c;
 
   V Trying to name a variable with the same name as a reserved keyword.
+  V TODO: finish
   egg egg;
 
   V Forgetting to specify an array index when using an array variable (i.e., trying to use an array variable as a regular integer variable).
   egg[4] someArray;
+  V TODO: finish
   someArray[] = 1;
 
   V Specifying an array index when using a regular integer variable (i.e., trying to use a regular integer variable as an array variable).
   egg notAnArray;
+  V TODO: finish
   notAnArray[0] = 1;
 
   V Declaring an array of size <= 0.
+  V TODO: finish
   egg[0] array;
-
-
-  b = 50;
-  c = a + b;
-  squawk(c);
 }
