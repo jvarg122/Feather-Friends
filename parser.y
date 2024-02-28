@@ -69,6 +69,11 @@ Function *get_function() {
   return &symbol_table[last];
 }
 
+struct WhileLoop{
+        CodeNode *beginLabel;
+        CodeNode *endLabel;
+}
+
 // find a particular variable using the symbol table.
 // grab the most recent function, and linear search to
 // find the symbol you are looking for.
@@ -327,15 +332,13 @@ statement: new_variable {
                 $$ = node;
 }
         | BREAK SEMICOLON {
-                // TODO
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string("TODO: break") + std::string("\n");
+                node->code = std::string(":= end") + currentWhileLoop->endlabel;
                 $$ = node;
 }
         | CONTINUE SEMICOLON {
-                // TODO
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string("TODO: continue") + std::string("\n");
+                node->code = std::string(":= end") + currentWhileLoop->beginlabel;
                 $$ = node;
 }
         ;
