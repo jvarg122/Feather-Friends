@@ -1965,7 +1965,7 @@ yyreduce:
 #line 491 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string((yyvsp[0].op_value));
+                //node->code = std::string($1);
                 node->name = std::string((yyvsp[0].op_value));
                 (yyval.code_node) = node;
 }
@@ -1981,7 +1981,7 @@ yyreduce:
                 }
 
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string((yyvsp[0].op_value));
+                //node->code = std::string($1);
                 node->name = std::string((yyvsp[0].op_value));
                 (yyval.code_node) = node;
 }

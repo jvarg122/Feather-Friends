@@ -490,7 +490,7 @@ new_variable: type TOKEN_IDENTIFIER SEMICOLON {
 
 variable: NUMBER {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string($1);
+                //node->code = std::string($1);
                 node->name = std::string($1);
                 $$ = node;
 }
@@ -501,7 +501,7 @@ variable: NUMBER {
                 }
 
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string($1);
+                //node->code = std::string($1);
                 node->name = std::string($1);
                 $$ = node;
 }
