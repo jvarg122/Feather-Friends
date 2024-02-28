@@ -72,18 +72,12 @@
 #include <string>
 #include <sstream>
 
+enum Type { Integer, Array };
+
 struct CodeNode {
   std::string code;
   std::string name;
 };
-
-int yylex();
-void yyerror(const char *s);
-enum Type { Integer, Array };
-int tempval = 0;
-int labelval = 0;
-CodeNode *currentTemp;
-CodeNode *currentLabel;
 
 struct Symbol {
   std::string name;
@@ -94,6 +88,20 @@ struct Function {
   std::string name;
   std::vector<Symbol> declarations;
 };
+
+struct WhileLoop{
+    CodeNode *beginLabel;
+    CodeNode *endLabel;
+};
+
+int yylex();
+void yyerror(const char *s);
+int tempval = 0;
+int labelval = 0;
+CodeNode *currentTemp;
+CodeNode *currentLabel;
+WhileLoop *currentWhileLoop;
+
 
 std::vector <Function> symbol_table;
 
@@ -189,7 +197,7 @@ void print_symbol_table(void) {
 }
 
 
-#line 193 "parser.tab.c" /* yacc.c:339  */
+#line 201 "parser.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -264,12 +272,12 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 128 "parser.y" /* yacc.c:355  */
+#line 136 "parser.y" /* yacc.c:355  */
 
   char *op_value;
   struct CodeNode *code_node;
 
-#line 273 "parser.tab.c" /* yacc.c:355  */
+#line 281 "parser.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -286,7 +294,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 290 "parser.tab.c" /* yacc.c:358  */
+#line 298 "parser.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -586,13 +594,13 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   172,   172,   176,   186,   192,   203,   207,   213,   223,
-     237,   241,   248,   259,   272,   276,   283,   288,   293,   298,
-     303,   308,   313,   318,   323,   328,   334,   342,   355,   366,
-     374,   379,   386,   393,   406,   413,   420,   426,   440,   446,
-     455,   464,   473,   482,   491,   502,   510,   522,   528,   539,
-     546,   555,   561,   569,   579,   584,   593,   599,   608,   617,
-     626,   635
+       0,   180,   180,   184,   194,   200,   211,   215,   221,   231,
+     245,   249,   256,   267,   280,   284,   291,   296,   301,   306,
+     311,   316,   321,   326,   331,   336,   341,   348,   362,   373,
+     381,   386,   393,   400,   413,   420,   427,   433,   452,   458,
+     469,   480,   491,   502,   513,   526,   534,   546,   552,   563,
+     570,   579,   585,   593,   603,   608,   617,   623,   632,   641,
+     650,   659
 };
 #endif
 
@@ -1451,16 +1459,16 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 172 "parser.y" /* yacc.c:1646  */
+#line 180 "parser.y" /* yacc.c:1646  */
     {
         struct CodeNode *node = new CodeNode;
         (yyval.code_node) = node;
 }
-#line 1460 "parser.tab.c" /* yacc.c:1646  */
+#line 1468 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 176 "parser.y" /* yacc.c:1646  */
+#line 184 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *program = (yyvsp[-1].code_node);
                 struct CodeNode *function = (yyvsp[0].code_node);
@@ -1470,21 +1478,21 @@ yyreduce:
                 print_symbol_table();
                 (yyval.code_node) = node;
 }
-#line 1474 "parser.tab.c" /* yacc.c:1646  */
+#line 1482 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 186 "parser.y" /* yacc.c:1646  */
+#line 194 "parser.y" /* yacc.c:1646  */
     {
         std::string function_name = (yyvsp[0].op_value);
         add_function_to_symbol_table(function_name);
         (yyval.op_value) = (yyvsp[0].op_value);
 }
-#line 1484 "parser.tab.c" /* yacc.c:1646  */
+#line 1492 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 192 "parser.y" /* yacc.c:1646  */
+#line 200 "parser.y" /* yacc.c:1646  */
     {
         struct CodeNode *node = new CodeNode;
         struct CodeNode *new_parameters = (yyvsp[-4].code_node);
@@ -1495,29 +1503,29 @@ yyreduce:
         node->code += std::string("endfunc\n\n");
         (yyval.code_node) = node;
 }
-#line 1499 "parser.tab.c" /* yacc.c:1646  */
+#line 1507 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 203 "parser.y" /* yacc.c:1646  */
+#line 211 "parser.y" /* yacc.c:1646  */
     {
         struct CodeNode *node = new CodeNode;
         (yyval.code_node) = node;
 }
-#line 1508 "parser.tab.c" /* yacc.c:1646  */
+#line 1516 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 207 "parser.y" /* yacc.c:1646  */
+#line 215 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *new_parameter = (yyvsp[0].code_node);
                 (yyval.code_node) = new_parameter;
 }
-#line 1517 "parser.tab.c" /* yacc.c:1646  */
+#line 1525 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 213 "parser.y" /* yacc.c:1646  */
+#line 221 "parser.y" /* yacc.c:1646  */
     {
                 std::string variable_name = (yyvsp[0].op_value);
                 add_variable_to_symbol_table(variable_name, Integer);
@@ -1528,11 +1536,11 @@ yyreduce:
                 node->code += std::string(". ") + std::string((yyvsp[0].op_value)) + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 1532 "parser.tab.c" /* yacc.c:1646  */
+#line 1540 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 223 "parser.y" /* yacc.c:1646  */
+#line 231 "parser.y" /* yacc.c:1646  */
     {
                 std::string variable_name = (yyvsp[-2].op_value);
                 add_variable_to_symbol_table(variable_name, Integer);
@@ -1545,30 +1553,30 @@ yyreduce:
                 node->code += new_parameter->code;
                 (yyval.code_node) = node;
 }
-#line 1549 "parser.tab.c" /* yacc.c:1646  */
+#line 1557 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 237 "parser.y" /* yacc.c:1646  */
+#line 245 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 (yyval.code_node) = node;
 }
-#line 1558 "parser.tab.c" /* yacc.c:1646  */
+#line 1566 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 241 "parser.y" /* yacc.c:1646  */
+#line 249 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1568 "parser.tab.c" /* yacc.c:1646  */
+#line 1576 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 248 "parser.y" /* yacc.c:1646  */
+#line 256 "parser.y" /* yacc.c:1646  */
     {
                 std::string variable_name = std::string((yyvsp[0].op_value));
                 if(!find(variable_name)) {
@@ -1580,11 +1588,11 @@ yyreduce:
                 (yyval.code_node) = node;
 
 }
-#line 1584 "parser.tab.c" /* yacc.c:1646  */
+#line 1592 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 259 "parser.y" /* yacc.c:1646  */
+#line 267 "parser.y" /* yacc.c:1646  */
     {
                 std::string variable_name = std::string((yyvsp[-2].op_value));
                 if(!find(variable_name)) {
@@ -1596,159 +1604,158 @@ yyreduce:
                 node->code += (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1600 "parser.tab.c" /* yacc.c:1646  */
+#line 1608 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 272 "parser.y" /* yacc.c:1646  */
+#line 280 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 (yyval.code_node) = node;
 }
-#line 1609 "parser.tab.c" /* yacc.c:1646  */
+#line 1617 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 276 "parser.y" /* yacc.c:1646  */
+#line 284 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[-1].code_node)->code + (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1619 "parser.tab.c" /* yacc.c:1646  */
+#line 1627 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 283 "parser.y" /* yacc.c:1646  */
+#line 291 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1629 "parser.tab.c" /* yacc.c:1646  */
+#line 1637 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 288 "parser.y" /* yacc.c:1646  */
+#line 296 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1639 "parser.tab.c" /* yacc.c:1646  */
+#line 1647 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 293 "parser.y" /* yacc.c:1646  */
+#line 301 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1649 "parser.tab.c" /* yacc.c:1646  */
+#line 1657 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 298 "parser.y" /* yacc.c:1646  */
+#line 306 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1659 "parser.tab.c" /* yacc.c:1646  */
+#line 1667 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 303 "parser.y" /* yacc.c:1646  */
+#line 311 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1669 "parser.tab.c" /* yacc.c:1646  */
+#line 1677 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 308 "parser.y" /* yacc.c:1646  */
+#line 316 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1679 "parser.tab.c" /* yacc.c:1646  */
+#line 1687 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 313 "parser.y" /* yacc.c:1646  */
+#line 321 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1689 "parser.tab.c" /* yacc.c:1646  */
+#line 1697 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 318 "parser.y" /* yacc.c:1646  */
+#line 326 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1699 "parser.tab.c" /* yacc.c:1646  */
+#line 1707 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 323 "parser.y" /* yacc.c:1646  */
+#line 331 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 (yyval.code_node) = node;
 }
-#line 1709 "parser.tab.c" /* yacc.c:1646  */
+#line 1717 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 328 "parser.y" /* yacc.c:1646  */
+#line 336 "parser.y" /* yacc.c:1646  */
     {
-                // TODO
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string("TODO: break") + std::string("\n");
+                node->code = std::string(":= end") + currentWhileLoop->endLabel->name;
                 (yyval.code_node) = node;
 }
-#line 1720 "parser.tab.c" /* yacc.c:1646  */
+#line 1727 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 334 "parser.y" /* yacc.c:1646  */
+#line 341 "parser.y" /* yacc.c:1646  */
     {
-                // TODO
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string("TODO: continue") + std::string("\n");
+                node->code = std::string(":= end") + currentWhileLoop->beginLabel->name;
                 (yyval.code_node) = node;
 }
-#line 1731 "parser.tab.c" /* yacc.c:1646  */
+#line 1737 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 342 "parser.y" /* yacc.c:1646  */
+#line 348 "parser.y" /* yacc.c:1646  */
     {
     struct CodeNode *node = new CodeNode;
     struct CodeNode *if_label = create_label(); 
-    struct CodeNode *else_label = create_label(); 
+    struct CodeNode *else_label = create_label();
+
     node->code += (yyvsp[-4].code_node)->code;
-    node->code += std::string("?:= ") + if_label->name + ", " + else_label->name + "\n";
+    node->code += std::string("?:= ") + if_label->name + ", " + (yyvsp[-4].code_node)->name + "\n";
     node->code += (yyvsp[-2].code_node)->code;
     node->code += std::string(":") + if_label->name + "\n";
     node->code += (yyvsp[0].code_node)->code;
     node->code += std::string(":") + else_label->name + "\n";
     (yyval.code_node) = node;
 }
-#line 1748 "parser.tab.c" /* yacc.c:1646  */
+#line 1755 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 355 "parser.y" /* yacc.c:1646  */
+#line 362 "parser.y" /* yacc.c:1646  */
     {
                 std::string variable_name = (yyvsp[-1].op_value);
                 add_variable_to_symbol_table(variable_name, Array);
@@ -1758,11 +1765,11 @@ yyreduce:
                 node->code += ".[] " + variable_name + ", " + std::string((yyvsp[-3].op_value)) + "\n";
                 (yyval.code_node) = node;
 }
-#line 1762 "parser.tab.c" /* yacc.c:1646  */
+#line 1769 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 366 "parser.y" /* yacc.c:1646  */
+#line 373 "parser.y" /* yacc.c:1646  */
     {
                 // array[1]
                 struct CodeNode *node = new CodeNode;
@@ -1770,21 +1777,21 @@ yyreduce:
                 node->code = "=[] " + temp->name + ", " + std::string((yyvsp[-3].op_value)) + ", " + std::string((yyvsp[-1].op_value)) + "\n";
                 (yyval.code_node) = node;
 }
-#line 1774 "parser.tab.c" /* yacc.c:1646  */
+#line 1781 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 374 "parser.y" /* yacc.c:1646  */
+#line 381 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code += "= " + std::string((yyvsp[-3].op_value)) + ", " +  std::string((yyvsp[-1].op_value)) + "\n";
                 (yyval.code_node) = node;
 }
-#line 1784 "parser.tab.c" /* yacc.c:1646  */
+#line 1791 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 379 "parser.y" /* yacc.c:1646  */
+#line 386 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = currentTemp->code + std::string("\n");
@@ -1792,11 +1799,11 @@ yyreduce:
                 node->code += "= " + std::string((yyvsp[-3].op_value)) + ", " + currentTemp->name + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 1796 "parser.tab.c" /* yacc.c:1646  */
+#line 1803 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 386 "parser.y" /* yacc.c:1646  */
+#line 393 "parser.y" /* yacc.c:1646  */
     {
                 // []= dst, index, src
                 // dst[index] = src (index and src are both immediates)
@@ -1804,11 +1811,11 @@ yyreduce:
                 node->code += "[]= " + std::string((yyvsp[-6].op_value)) + ", " + std::string((yyvsp[-4].op_value)) + ", " + std::string((yyvsp[-1].op_value)) + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 1808 "parser.tab.c" /* yacc.c:1646  */
+#line 1815 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 393 "parser.y" /* yacc.c:1646  */
+#line 400 "parser.y" /* yacc.c:1646  */
     {
                 // []= dst, index, src
                 // dst[index] = src (index is an immediate, src is an expression)
@@ -1820,46 +1827,51 @@ yyreduce:
                 node->code += "[]= " + std::string((yyvsp[-6].op_value)) + ", " + std::string((yyvsp[-4].op_value)) + ", " + currentTemp->name + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 1824 "parser.tab.c" /* yacc.c:1646  */
+#line 1831 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 406 "parser.y" /* yacc.c:1646  */
+#line 413 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = std::string("ret ") + std::string((yyvsp[-1].op_value)) + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 1834 "parser.tab.c" /* yacc.c:1646  */
+#line 1841 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 413 "parser.y" /* yacc.c:1646  */
+#line 420 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
-                struct CodeNode *else_label = create_temporary_variable();
+                struct CodeNode *else_label = create_label();
                 node->code += ":=" + else_label->name + "\n"; 
                 node->code += (yyvsp[-1].code_node)->code; 
                 (yyval.code_node) = node;
 }
-#line 1846 "parser.tab.c" /* yacc.c:1646  */
+#line 1853 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 420 "parser.y" /* yacc.c:1646  */
+#line 427 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 (yyval.code_node) = node;
 }
-#line 1855 "parser.tab.c" /* yacc.c:1646  */
+#line 1862 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 426 "parser.y" /* yacc.c:1646  */
+#line 433 "parser.y" /* yacc.c:1646  */
     {
-struct CodeNode *node = new CodeNode;
-    struct CodeNode *begin_loop_label = create_temporary_variable();
-    struct CodeNode *end_loop_label = create_temporary_variable();
+    struct CodeNode *node = new CodeNode;
+    struct WhileLoop *loop = new WhileLoop;
+    struct CodeNode *begin_loop_label = create_label();
+    struct CodeNode *end_loop_label = create_label();
+    loop->beginLabel = begin_loop_label;
+    loop->endLabel = end_loop_label;
+    currentWhileLoop = loop;
+
     node->code += ":" + begin_loop_label->name + "\n";
     node->code += (yyvsp[-3].code_node)->code; 
     node->code += "?:= " + end_loop_label->name + ", " + (yyvsp[-3].code_node)->name + "\n";
@@ -1868,21 +1880,21 @@ struct CodeNode *node = new CodeNode;
     node->code += ":" + end_loop_label->name + "\n";
     (yyval.code_node) = node;
 }
-#line 1872 "parser.tab.c" /* yacc.c:1646  */
+#line 1884 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 440 "parser.y" /* yacc.c:1646  */
+#line 452 "parser.y" /* yacc.c:1646  */
     {
 		      struct CodeNode *node = new CodeNode;
           node->code = std::string(".< ") + std::string((yyvsp[-2].op_value));
 		      (yyval.code_node) = node;
 			}
-#line 1882 "parser.tab.c" /* yacc.c:1646  */
+#line 1894 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 446 "parser.y" /* yacc.c:1646  */
+#line 458 "parser.y" /* yacc.c:1646  */
     {
 		struct CodeNode *node = new CodeNode;
 		struct CodeNode *temp = create_temporary_variable();
@@ -1890,13 +1902,15 @@ struct CodeNode *node = new CodeNode;
                 node->code += (yyvsp[-2].code_node)->code;
                 node->code += (yyvsp[0].code_node)->code + "\n";
                 node->code += std::string("> ") + temp->name + std::string(", ") + (yyvsp[-2].code_node)->name + std::string(", ") + (yyvsp[0].code_node)->name + "\n";
+
+                node->name = temp->name;
                 (yyval.code_node) = node;		
 			}
-#line 1896 "parser.tab.c" /* yacc.c:1646  */
+#line 1910 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 455 "parser.y" /* yacc.c:1646  */
+#line 469 "parser.y" /* yacc.c:1646  */
     {
 		struct CodeNode *node = new CodeNode;
 		struct CodeNode *temp = create_temporary_variable();
@@ -1904,13 +1918,15 @@ struct CodeNode *node = new CodeNode;
                 node->code += (yyvsp[-2].code_node)->code;
                 node->code += (yyvsp[0].code_node)->code + "\n";
                 node->code += std::string("< ") + temp->name + std::string(", ") + (yyvsp[-2].code_node)->name + std::string(", ") + (yyvsp[0].code_node)->name + "\n";
+
+                node->name = temp->name;
                 (yyval.code_node) = node;		
 			}
-#line 1910 "parser.tab.c" /* yacc.c:1646  */
+#line 1926 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 464 "parser.y" /* yacc.c:1646  */
+#line 480 "parser.y" /* yacc.c:1646  */
     {
 		struct CodeNode *node = new CodeNode;
 		struct CodeNode *temp = create_temporary_variable();
@@ -1918,40 +1934,14 @@ struct CodeNode *node = new CodeNode;
                 node->code += (yyvsp[-2].code_node)->code;
                 node->code += (yyvsp[0].code_node)->code + "\n";
                 node->code = std::string("<= ") + temp->name + std::string(", ") + (yyvsp[-2].code_node)->name + std::string(", ") + (yyvsp[0].code_node)->name + "\n";
+
+                node->name = temp->name;
                 (yyval.code_node) = node;		
 			}
-#line 1924 "parser.tab.c" /* yacc.c:1646  */
+#line 1942 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 473 "parser.y" /* yacc.c:1646  */
-    {
-		struct CodeNode *node = new CodeNode;
-		struct CodeNode *temp = create_temporary_variable();
-		node->code += temp->code;
-                node->code += (yyvsp[-2].code_node)->code;
-                node->code += (yyvsp[0].code_node)->code + "\n";
-                node->code = std::string(">= ") + temp->name + std::string(", ") + (yyvsp[-2].code_node)->name + std::string(", ") + (yyvsp[0].code_node)->name + "\n";
-                (yyval.code_node) = node;		
-			}
-#line 1938 "parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 43:
-#line 482 "parser.y" /* yacc.c:1646  */
-    {
-		struct CodeNode *node = new CodeNode;
-		struct CodeNode *temp = create_temporary_variable();
-		node->code += temp->code;
-                node->code += (yyvsp[-2].code_node)->code;
-                node->code += (yyvsp[0].code_node)->code + "\n";
-                node->code = std::string("= ") + temp->name + std::string(", ") + (yyvsp[-2].code_node)->name + std::string(", ") + (yyvsp[0].code_node)->name + "\n";
-                (yyval.code_node) = node;		
-			}
-#line 1952 "parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 44:
 #line 491 "parser.y" /* yacc.c:1646  */
     {
 		struct CodeNode *node = new CodeNode;
@@ -1959,14 +1949,48 @@ struct CodeNode *node = new CodeNode;
 		node->code += temp->code;
                 node->code += (yyvsp[-2].code_node)->code;
                 node->code += (yyvsp[0].code_node)->code + "\n";
-                node->code = std::string("!= ") + temp->name + std::string(", ") + (yyvsp[-2].code_node)->name + std::string(", ") + (yyvsp[0].code_node)->name + "\n";
+                node->code = std::string(">= ") + temp->name + std::string(", ") + (yyvsp[-2].code_node)->name + std::string(", ") + (yyvsp[0].code_node)->name + "\n";
+
+                node->name = temp->name;
                 (yyval.code_node) = node;		
 			}
-#line 1966 "parser.tab.c" /* yacc.c:1646  */
+#line 1958 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 502 "parser.y" /* yacc.c:1646  */
+    {
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_temporary_variable();
+		node->code += temp->code;
+                node->code += (yyvsp[-2].code_node)->code;
+                node->code += (yyvsp[0].code_node)->code + "\n";
+                node->code = std::string("= ") + temp->name + std::string(", ") + (yyvsp[-2].code_node)->name + std::string(", ") + (yyvsp[0].code_node)->name + "\n";
+
+                node->name = temp->name;
+                (yyval.code_node) = node;		
+			}
+#line 1974 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 513 "parser.y" /* yacc.c:1646  */
+    {
+		struct CodeNode *node = new CodeNode;
+		struct CodeNode *temp = create_temporary_variable();
+		node->code += temp->code;
+                node->code += (yyvsp[-2].code_node)->code;
+                node->code += (yyvsp[0].code_node)->code + "\n";
+                node->code = std::string("!= ") + temp->name + std::string(", ") + (yyvsp[-2].code_node)->name + std::string(", ") + (yyvsp[0].code_node)->name + "\n";
+
+                node->name = temp->name;
+                (yyval.code_node) = node;		
+			}
+#line 1990 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 502 "parser.y" /* yacc.c:1646  */
+#line 526 "parser.y" /* yacc.c:1646  */
     {
                 std::string variable_name = (yyvsp[-1].op_value);
                 add_variable_to_symbol_table(variable_name, Integer);
@@ -1975,11 +1999,11 @@ struct CodeNode *node = new CodeNode;
                 node->code = std::string(". ") + std::string((yyvsp[-1].op_value)) + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 1979 "parser.tab.c" /* yacc.c:1646  */
+#line 2003 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 510 "parser.y" /* yacc.c:1646  */
+#line 534 "parser.y" /* yacc.c:1646  */
     {
                 std::string variable_name = (yyvsp[-3].op_value);
                 add_variable_to_symbol_table(variable_name, Integer);
@@ -1989,22 +2013,22 @@ struct CodeNode *node = new CodeNode;
                 node->code += "= " + std::string((yyvsp[-3].op_value)) + ", " + std::string((yyvsp[-1].op_value)) + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 1993 "parser.tab.c" /* yacc.c:1646  */
+#line 2017 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 522 "parser.y" /* yacc.c:1646  */
+#line 546 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 //node->code = std::string($1);
                 node->name = std::string((yyvsp[0].op_value));
                 (yyval.code_node) = node;
 }
-#line 2004 "parser.tab.c" /* yacc.c:1646  */
+#line 2028 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 528 "parser.y" /* yacc.c:1646  */
+#line 552 "parser.y" /* yacc.c:1646  */
     {
                 std::string variable_name = std::string((yyvsp[0].op_value));
                 if(!find(variable_name)) {
@@ -2016,55 +2040,55 @@ struct CodeNode *node = new CodeNode;
                 node->name = std::string((yyvsp[0].op_value));
                 (yyval.code_node) = node;
 }
-#line 2020 "parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 49:
-#line 539 "parser.y" /* yacc.c:1646  */
-    {
-                struct CodeNode *node = new CodeNode;
-                node->code = currentTemp->code + "\n";
-                node->code += (yyvsp[0].code_node)->code;
-                node->name = std::string(currentTemp->name);
-                (yyval.code_node) = node;
-}
-#line 2032 "parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 50:
-#line 546 "parser.y" /* yacc.c:1646  */
-    {
-                struct CodeNode *node = new CodeNode;
-                node->code = currentTemp->code + "\n";
-                node->code += (yyvsp[0].code_node)->code;
-                node->name = std::string(currentTemp->name);
-                (yyval.code_node) = node;
-}
 #line 2044 "parser.tab.c" /* yacc.c:1646  */
     break;
 
+  case 49:
+#line 563 "parser.y" /* yacc.c:1646  */
+    {
+                struct CodeNode *node = new CodeNode;
+                node->code = currentTemp->code + "\n";
+                node->code += (yyvsp[0].code_node)->code;
+                node->name = std::string(currentTemp->name);
+                (yyval.code_node) = node;
+}
+#line 2056 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 50:
+#line 570 "parser.y" /* yacc.c:1646  */
+    {
+                struct CodeNode *node = new CodeNode;
+                node->code = currentTemp->code + "\n";
+                node->code += (yyvsp[0].code_node)->code;
+                node->name = std::string(currentTemp->name);
+                (yyval.code_node) = node;
+}
+#line 2068 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
   case 51:
-#line 555 "parser.y" /* yacc.c:1646  */
+#line 579 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 (yyval.code_node) = node;
 }
-#line 2053 "parser.tab.c" /* yacc.c:1646  */
+#line 2077 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 561 "parser.y" /* yacc.c:1646  */
+#line 585 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[-2].code_node)->code;
                 node->code += ".> " + currentTemp->name + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 2064 "parser.tab.c" /* yacc.c:1646  */
+#line 2088 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 569 "parser.y" /* yacc.c:1646  */
+#line 593 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *temp = create_temporary_variable();
                 struct CodeNode *node = new CodeNode;
@@ -2073,21 +2097,21 @@ struct CodeNode *node = new CodeNode;
                 node->code += "call " + std::string((yyvsp[-3].op_value)) + ", " + temp->name + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 2077 "parser.tab.c" /* yacc.c:1646  */
+#line 2101 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 579 "parser.y" /* yacc.c:1646  */
+#line 603 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 (yyval.code_node) = node;
 
 }
-#line 2087 "parser.tab.c" /* yacc.c:1646  */
+#line 2111 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 584 "parser.y" /* yacc.c:1646  */
+#line 608 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *expr = (yyvsp[0].code_node);
                 struct CodeNode *exprs = (yyvsp[-1].code_node);
@@ -2095,22 +2119,22 @@ struct CodeNode *node = new CodeNode;
                 node->code = exprs->code + expr->code;
                 (yyval.code_node) = node;
 }
-#line 2099 "parser.tab.c" /* yacc.c:1646  */
+#line 2123 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 593 "parser.y" /* yacc.c:1646  */
+#line 617 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *node = new CodeNode;
                 node->code = (yyvsp[0].code_node)->code;
                 node->name = (yyvsp[0].code_node)->name;
                 (yyval.code_node) = node;
 }
-#line 2110 "parser.tab.c" /* yacc.c:1646  */
+#line 2134 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 599 "parser.y" /* yacc.c:1646  */
+#line 623 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *temp = create_temporary_variable();
                 struct CodeNode *node = new CodeNode;
@@ -2120,11 +2144,11 @@ struct CodeNode *node = new CodeNode;
                 node->code += "+ " + temp->name + ", " + (yyvsp[-2].code_node)->name + ", " + (yyvsp[0].code_node)->name + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 2124 "parser.tab.c" /* yacc.c:1646  */
+#line 2148 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 608 "parser.y" /* yacc.c:1646  */
+#line 632 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *temp = create_temporary_variable();
                 struct CodeNode *node = new CodeNode;
@@ -2134,11 +2158,11 @@ struct CodeNode *node = new CodeNode;
                 node->code = "- " + temp->name + ", " + (yyvsp[-2].code_node)->name + ", " + (yyvsp[0].code_node)->name + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 2138 "parser.tab.c" /* yacc.c:1646  */
+#line 2162 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 617 "parser.y" /* yacc.c:1646  */
+#line 641 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *temp = create_temporary_variable();
                 struct CodeNode *node = new CodeNode;
@@ -2148,11 +2172,11 @@ struct CodeNode *node = new CodeNode;
                 node->code = "* " + temp->name + ", " + (yyvsp[-2].code_node)->name + ", " + (yyvsp[0].code_node)->name + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 2152 "parser.tab.c" /* yacc.c:1646  */
+#line 2176 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 626 "parser.y" /* yacc.c:1646  */
+#line 650 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *temp = create_temporary_variable();
                 struct CodeNode *node = new CodeNode;
@@ -2162,11 +2186,11 @@ struct CodeNode *node = new CodeNode;
                 node->code = "/ " + temp->name + ", " + (yyvsp[-2].code_node)->name + ", " + (yyvsp[0].code_node)->name + std::string("\n");
                 (yyval.code_node) = node;
 }
-#line 2166 "parser.tab.c" /* yacc.c:1646  */
+#line 2190 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 635 "parser.y" /* yacc.c:1646  */
+#line 659 "parser.y" /* yacc.c:1646  */
     {
                 struct CodeNode *temp = create_temporary_variable();
                 struct CodeNode *node = new CodeNode;
@@ -2177,11 +2201,11 @@ struct CodeNode *node = new CodeNode;
                 (yyval.code_node) = node;
 
 }
-#line 2181 "parser.tab.c" /* yacc.c:1646  */
+#line 2205 "parser.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2185 "parser.tab.c" /* yacc.c:1646  */
+#line 2209 "parser.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2409,7 +2433,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 646 "parser.y" /* yacc.c:1906  */
+#line 670 "parser.y" /* yacc.c:1906  */
 
 
 int main(void) {

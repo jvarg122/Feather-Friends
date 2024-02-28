@@ -1,0 +1,6 @@
+V TODO: implement READ aka survey. Currently no way for users to input
+
+chirp main() {
+    egg a;
+    survey(a);
+}

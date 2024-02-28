@@ -7,19 +7,12 @@
 #include <string>
 #include <sstream>
 
+enum Type { Integer, Array };
+
 struct CodeNode {
   std::string code;
   std::string name;
 };
-
-int yylex();
-void yyerror(const char *s);
-enum Type { Integer, Array };
-int tempval = 0;
-int labelval = 0;
-CodeNode *currentTemp;
-CodeNode *currentLabel;
-WhileLoop *currentWhileLoop;
 
 struct Symbol {
   std::string name;
@@ -30,6 +23,20 @@ struct Function {
   std::string name;
   std::vector<Symbol> declarations;
 };
+
+struct WhileLoop{
+    CodeNode *beginLabel;
+    CodeNode *endLabel;
+};
+
+int yylex();
+void yyerror(const char *s);
+int tempval = 0;
+int labelval = 0;
+CodeNode *currentTemp;
+CodeNode *currentLabel;
+WhileLoop *currentWhileLoop;
+
 
 std::vector <Function> symbol_table;
 
@@ -67,11 +74,6 @@ Function *get_function() {
     exit(1);
   }
   return &symbol_table[last];
-}
-
-struct WhileLoop{
-        CodeNode *beginLabel;
-        CodeNode *endLabel;
 }
 
 // find a particular variable using the symbol table.
@@ -333,12 +335,12 @@ statement: new_variable {
 }
         | BREAK SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string(":= end") + currentWhileLoop->endlabel;
+                node->code = std::string(":= end") + currentWhileLoop->endLabel->name;
                 $$ = node;
 }
         | CONTINUE SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string(":= end") + currentWhileLoop->beginlabel;
+                node->code = std::string(":= end") + currentWhileLoop->beginLabel->name;
                 $$ = node;
 }
         ;
@@ -349,7 +351,7 @@ if_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statem
     struct CodeNode *else_label = create_label();
 
     node->code += $2->code;
-    node->code += std::string("?:= ") + if_label->name + ", " + else_label->name + "\n";
+    node->code += std::string("?:= ") + if_label->name + ", " + $2->name + "\n";
     node->code += $4->code;
     node->code += std::string(":") + if_label->name + "\n";
     node->code += $6->code;
@@ -417,7 +419,7 @@ return_statement: RETURN TOKEN_IDENTIFIER SEMICOLON {
 
 else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
                 struct CodeNode *node = new CodeNode;
-                struct CodeNode *else_label = create_temporary_variable();
+                struct CodeNode *else_label = create_label();
                 node->code += ":=" + else_label->name + "\n"; 
                 node->code += $3->code; 
                 $$ = node;
@@ -431,8 +433,8 @@ else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
 while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
     struct CodeNode *node = new CodeNode;
     struct WhileLoop *loop = new WhileLoop;
-    struct CodeNode *begin_loop_label = create_temporary_variable();
-    struct CodeNode *end_loop_label = create_temporary_variable();
+    struct CodeNode *begin_loop_label = create_label();
+    struct CodeNode *end_loop_label = create_label();
     loop->beginLabel = begin_loop_label;
     loop->endLabel = end_loop_label;
     currentWhileLoop = loop;
@@ -460,6 +462,8 @@ boolean_expressions: expression GREATER expression {
                 node->code += $1->code;
                 node->code += $3->code + "\n";
                 node->code += std::string("> ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
+
+                node->name = temp->name;
                 $$ = node;		
 			}
                    | expression LESS expression {
@@ -469,6 +473,8 @@ boolean_expressions: expression GREATER expression {
                 node->code += $1->code;
                 node->code += $3->code + "\n";
                 node->code += std::string("< ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
+
+                node->name = temp->name;
                 $$ = node;		
 			}
                    | expression LESSEQUAL expression {
@@ -478,6 +484,8 @@ boolean_expressions: expression GREATER expression {
                 node->code += $1->code;
                 node->code += $3->code + "\n";
                 node->code = std::string("<= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
+
+                node->name = temp->name;
                 $$ = node;		
 			}
                    | expression GREATEREQUAL expression {
@@ -487,6 +495,8 @@ boolean_expressions: expression GREATER expression {
                 node->code += $1->code;
                 node->code += $3->code + "\n";
                 node->code = std::string(">= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
+
+                node->name = temp->name;
                 $$ = node;		
 			}
                    | expression EQUALITY expression {
@@ -496,6 +506,8 @@ boolean_expressions: expression GREATER expression {
                 node->code += $1->code;
                 node->code += $3->code + "\n";
                 node->code = std::string("= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
+
+                node->name = temp->name;
                 $$ = node;		
 			}
                    | expression NOTEQUAL expression {
@@ -505,6 +517,8 @@ boolean_expressions: expression GREATER expression {
                 node->code += $1->code;
                 node->code += $3->code + "\n";
                 node->code = std::string("!= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
+
+                node->name = temp->name;
                 $$ = node;		
 			}
                    ;
