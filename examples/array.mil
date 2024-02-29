@@ -1,0 +1,29 @@
+func main
+.[] array, 4
+[]= array, 0, 2
+. __temp0__
+=[] __temp0__, array, 0
+.> __temp0__
+. __temp3__
+. __temp1__
+=[] __temp1__, array, 0
+. __temp2__
+=[] __temp2__, array, 0
+. __temp3__
++ __temp3__, __temp1__, __temp2__
+[]= array, 1, __temp3__
+. __temp4__
+=[] __temp4__, array, 1
+.> __temp4__
+. __temp7__
+. __temp5__
+=[] __temp5__, array, 1
+. __temp6__
+* __temp6__, 2, 2
+. __temp7__
++ __temp7__, __temp5__, __temp6__
+[]= array, 2, __temp7__
+. __temp8__
+=[] __temp8__, array, 2
+.> __temp8__
+endfunc

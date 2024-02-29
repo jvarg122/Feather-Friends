@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
-#include <string>
+#include <string.h>
 #include <sstream>
 
 enum Type { Integer, Array };
@@ -34,6 +34,7 @@ extern int yylineno;
 void yyerror(const char *s);
 int tempval = 0;
 int labelval = 0;
+const Function *emptyfn = new Function;
 CodeNode *currentTemp;
 CodeNode *currentLabel;
 WhileLoop *currentWhileLoop;
@@ -69,10 +70,13 @@ CodeNode *create_label(){
 Function *get_function() {
   int last = symbol_table.size()-1;
   if (last < 0) {
-    printf("***Error. Attempt to call get_function with an empty symbol table\n");
-    printf("Create a 'Function' object using 'add_function_to_symbol_table' before\n");
-    printf("calling 'find' or 'add_variable_to_symbol_table'");
-    exit(1);
+        // Return empty function if not found
+        Function *f = new Function;
+        return f;
+    //printf("***Error. Attempt to call get_function with an empty symbol table\n");
+    //printf("Create a 'Function' object using 'add_function_to_symbol_table' before\n");
+    //printf("calling 'find' or 'add_variable_to_symbol_table'");
+    //exit(1);
   }
   return &symbol_table[last];
 }
@@ -81,11 +85,15 @@ Function *get_function() {
 // grab the most recent function, and linear search to
 // find the symbol you are looking for.
 // you may want to extend "find" to handle different types of "Integer" vs "Array"
-bool find(std::string &value) {
+bool find(std::string &value, Type type = Integer) {
   Function *f = get_function();
+  if(f == emptyfn) {
+    // no function found
+    return false;
+  }
   for(int i=0; i < f->declarations.size(); i++) {
     Symbol *s = &f->declarations[i];
-    if (s->name == value) {
+    if (s->name == value && s->type == type) {
       return true;
     }
   }
@@ -132,9 +140,11 @@ void print_symbol_table(void) {
   printf("--------------------\n");
 }
 
+// ========================
 // ERROR HANDLING FUNCTIONS
-void errchk_duplicate_variable(std::string variable_name) {
-    if(find(variable_name)) {
+// ========================
+void errchk_duplicate_variable(std::string variable_name, Type type = Integer) {
+    if(find(variable_name, type)) {
         yyerror(std::string("Duplicate variable: " + variable_name).c_str());
     }
 }
@@ -147,21 +157,45 @@ void errchk_duplicate_function(std::string function_name) {
     */
 }
 
-void errchk_using_undeclared_variable(std::string variable_name) {
-    if(!find(variable_name)) {
+void errchk_using_undeclared_variable(std::string variable_name, Type type = Integer) {
+    if(!find(variable_name, type)) {
         yyerror(std::string("Tried to access variable that doesn't exist: " + variable_name).c_str());
     }
 }
 
 void errchk_using_undeclared_function(std::string function_name) {
-    /*
-    if() {
-        Function *f = get_function();
-    }
     if(!find(function_name)) {
         yyerror(std::string("Tried to call a function that doesn't exist: " + function_name).c_str());
     }
-    */
+}
+
+void errchk_does_main_exist() {
+    bool foundMain = false;
+    //printf("\n\n=========\n");
+    for(int i=0; i<symbol_table.size(); i++) {
+        if(strcmp(symbol_table[i].name.c_str(), "main") == 0)
+        {
+            foundMain = true;
+        }
+    }
+    //printf("\n=========\n");
+    //printf("%d\n\n", foundMain);
+    if(!foundMain) {
+        yyerror("There is no main()!");
+    }
+}
+
+void errchk_assert_variable_is_array(std::string variable_name) {
+    if(!find(variable_name, Array) && find(variable_name)) {
+        yyerror(std::string("Tried to use a non-array variable: \"" + variable_name + "\" like an array.").c_str());
+    }
+}
+
+void errchk_assert_non_zero(std::string string_number) {
+    int num = std::stoi(string_number);
+    if(!(num > 0)) {
+        yyerror("Array size must be greater than zero.");
+    }
 }
 
 %}
@@ -221,6 +255,8 @@ program: %empty {
                 struct CodeNode *function = $2;
                 struct CodeNode *node = new CodeNode;
                 node->code = program->code + function->code;
+                errchk_does_main_exist();
+
                 printf("%s", node->code.c_str());
                 print_symbol_table();
                 $$ = node;
@@ -395,7 +431,10 @@ if_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statem
 
 new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON {
                 std::string variable_name = $5;
+                std::string array_size = $3;
                 errchk_duplicate_variable(variable_name);
+                errchk_assert_non_zero(array_size);
+
                 add_variable_to_symbol_table(variable_name, Array);
 
                 struct CodeNode *node = new CodeNode;
@@ -408,7 +447,9 @@ new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON {
 array_get_pointer: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET {
                 // array[1]
                 std::string variable_name = $1;
-                errchk_using_undeclared_variable(variable_name);
+                errchk_using_undeclared_variable(variable_name, Array);
+                errchk_assert_variable_is_array(variable_name);
+
                 struct CodeNode *node = new CodeNode;
                 struct CodeNode *temp = create_temporary_variable();
                 node->code = "=[] " + temp->name + ", " + std::string($1) + ", " + std::string($3) + "\n";
@@ -434,7 +475,8 @@ assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
 } 
         | TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN NUMBER SEMICOLON {
                 std::string variable_name = $1;
-                errchk_using_undeclared_variable(variable_name);
+                errchk_using_undeclared_variable(variable_name, Array);
+                errchk_assert_variable_is_array(variable_name);
                 
                 // []= dst, index, src
                 // dst[index] = src (index and src are both immediates)
@@ -444,7 +486,8 @@ assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
 }
         | TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN expressions SEMICOLON {
                 std::string variable_name = $1;
-                errchk_using_undeclared_variable(variable_name);
+                errchk_using_undeclared_variable(variable_name, Array);
+                errchk_assert_variable_is_array(variable_name);
                 
                 // []= dst, index, src
                 // dst[index] = src (index is an immediate, src is an expression)
@@ -644,7 +687,7 @@ print: PRINT LEFTPAREN variable RIGHTPAREN SEMICOLON {
 }
             ;
 
-function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON {
+function_call: TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN {
                 std::string function_name = $1;
                 errchk_using_undeclared_function(function_name);
 

@@ -85,7 +85,7 @@ Grammar
 
    51 print: PRINT LEFTPAREN variable RIGHTPAREN SEMICOLON
 
-   52 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON
+   52 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN
 
    53 expressions: %empty
    54            | expressions expression
@@ -109,11 +109,11 @@ INT (260) 50
 PRINT (261) 51
 BREAK (262) 24
 LEFTPAREN (263) 4 37 51 52 61
-RIGHTPAREN (264) 4 37 51 61
+RIGHTPAREN (264) 4 37 51 52 61
 LEFTCURLY (265) 4 26 34 36
 RIGHTCURLY (266) 4 26 34 36
 COMMA (267) 8 12
-SEMICOLON (268) 24 25 27 29 30 31 32 33 37 44 45 51 52
+SEMICOLON (268) 24 25 27 29 30 31 32 33 37 44 45 51
 PLUS (269) 56
 SUBTRACT (270) 57
 MULTIPLY (271) 58
@@ -443,7 +443,7 @@ State 26
    30                 | TOKEN_IDENTIFIER . ASSIGN expressions SEMICOLON
    31                 | TOKEN_IDENTIFIER . LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN NUMBER SEMICOLON
    32                 | TOKEN_IDENTIFIER . LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN expressions SEMICOLON
-   52 function_call: TOKEN_IDENTIFIER . LEFTPAREN parameters SEMICOLON
+   52 function_call: TOKEN_IDENTIFIER . LEFTPAREN parameters RIGHTPAREN
 
     LEFTPAREN    shift, and go to state 52
     ASSIGN       shift, and go to state 53
@@ -588,7 +588,7 @@ State 44
 
    28 array_get_pointer: TOKEN_IDENTIFIER . LEFTBRACKET NUMBER RIGHTBRACKET
    47 variable: TOKEN_IDENTIFIER .
-   52 function_call: TOKEN_IDENTIFIER . LEFTPAREN parameters SEMICOLON
+   52 function_call: TOKEN_IDENTIFIER . LEFTPAREN parameters RIGHTPAREN
 
     LEFTPAREN    shift, and go to state 52
     LEFTBRACKET  shift, and go to state 61
@@ -668,7 +668,7 @@ State 51
 
 State 52
 
-   52 function_call: TOKEN_IDENTIFIER LEFTPAREN . parameters SEMICOLON
+   52 function_call: TOKEN_IDENTIFIER LEFTPAREN . parameters RIGHTPAREN
 
     TOKEN_IDENTIFIER  shift, and go to state 75
 
@@ -944,9 +944,9 @@ State 75
 
 State 76
 
-   52 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters . SEMICOLON
+   52 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters . RIGHTPAREN
 
-    SEMICOLON  shift, and go to state 102
+    RIGHTPAREN  shift, and go to state 102
 
 
 State 77
@@ -1328,7 +1328,7 @@ State 101
 
 State 102
 
-   52 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters SEMICOLON .
+   52 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN .
 
     $default  reduce using rule 52 (function_call)
 
