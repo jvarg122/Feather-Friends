@@ -34,7 +34,9 @@ extern int yylineno;
 void yyerror(const char *s);
 int tempval = 0;
 int labelval = 0;
+int currentParameters = 0;
 const Function *emptyfn = new Function;
+CodeNode *globalCodeParse;
 CodeNode *currentTemp;
 CodeNode *currentLabel;
 WhileLoop *currentWhileLoop;
@@ -98,6 +100,16 @@ bool find(std::string &value, Type type = Integer) {
     }
   }
   return false;
+}
+
+bool find_function(std::string value) {
+    for(int i=0; i<symbol_table.size(); i++) {
+        if(strcmp(symbol_table[i].name.c_str(), value.c_str()) == 0)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 // when you see a function declaration inside the grammar, add
@@ -164,22 +176,13 @@ void errchk_using_undeclared_variable(std::string variable_name, Type type = Int
 }
 
 void errchk_using_undeclared_function(std::string function_name) {
-    if(!find(function_name)) {
+    if(!find_function(function_name)) {
         yyerror(std::string("Tried to call a function that doesn't exist: " + function_name).c_str());
     }
 }
 
 void errchk_does_main_exist() {
-    bool foundMain = false;
-    //printf("\n\n=========\n");
-    for(int i=0; i<symbol_table.size(); i++) {
-        if(strcmp(symbol_table[i].name.c_str(), "main") == 0)
-        {
-            foundMain = true;
-        }
-    }
-    //printf("\n=========\n");
-    //printf("%d\n\n", foundMain);
+    bool foundMain = find_function("main");
     if(!foundMain) {
         yyerror("There is no main()!");
     }
@@ -255,11 +258,8 @@ program: %empty {
                 struct CodeNode *function = $2;
                 struct CodeNode *node = new CodeNode;
                 node->code = program->code + function->code;
-                errchk_does_main_exist();
-
-                printf("%s", node->code.c_str());
-                print_symbol_table();
                 $$ = node;
+                globalCodeParse = node;
 }
 
 function_header: FUNC TOKEN_IDENTIFIER {
@@ -270,6 +270,8 @@ function_header: FUNC TOKEN_IDENTIFIER {
 }
 
 function: function_header LEFTPAREN new_parameters RIGHTPAREN LEFTCURLY statements RIGHTCURLY {
+        currentParameters = 0;
+
         struct CodeNode *node = new CodeNode;
         struct CodeNode *new_parameters = $3;
         struct CodeNode *statements = $6;
@@ -299,6 +301,8 @@ new_parameter: type TOKEN_IDENTIFIER {
                 struct CodeNode *type = $1;
                 node->code = type->code;
                 node->code += std::string(". ") + std::string($2) + std::string("\n");
+                node->code += std::string("= " + variable_name + ", $" + std::to_string(currentParameters) + "\n");
+                currentParameters++;
                 $$ = node;
 }
             | type TOKEN_IDENTIFIER COMMA new_parameter {
@@ -312,6 +316,9 @@ new_parameter: type TOKEN_IDENTIFIER {
                 node->code = type->code;
                 node->code += std::string(". ") + std::string($2) + std::string("\n");
                 node->code += new_parameter->code;
+                node->code += std::string("= " + variable_name + ", $" + std::to_string(currentParameters) + "\n");
+                currentParameters++;
+
                 $$ = node;
 }
             ;
@@ -327,22 +334,17 @@ parameters: %empty {
 }
           ;
 
-parameter: TOKEN_IDENTIFIER {
-                std::string variable_name = std::string($1);
-                errchk_using_undeclared_variable(variable_name);
-        
+parameter: expressions COMMA parameter {
                 struct CodeNode *node = new CodeNode;
-                node->code = "param " + std::string($1) + std::string("\n");
-                $$ = node;
-
-}
-        | TOKEN_IDENTIFIER COMMA parameter {
-                std::string variable_name = std::string($1);
-                errchk_using_undeclared_variable(variable_name);
-
-                struct CodeNode *node = new CodeNode;
-                node->code = "param " + std::string($1) + std::string("\n");
+                node->code = "param " + $1->name + std::string("\n");
+                node->code += $1->code;
                 node->code += $3->code;
+                $$ = node;
+}
+        | expressions {
+                struct CodeNode *node = new CodeNode;
+                node->code = "param " + $1->name + std::string("\n");
+                node->code += $1->code;
                 $$ = node;
 }
         ;
@@ -501,13 +503,25 @@ assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
 }
         ;
 
-return_statement: RETURN TOKEN_IDENTIFIER SEMICOLON {
-                std::string variable_name = $2;
-                errchk_using_undeclared_variable(variable_name);
+
+
+/*
+| RETURN TOKEN_IDENTIFIER SEMICOLON {
+                        std::string variable_name = $2;
+                        errchk_using_undeclared_variable(variable_name);
                 
-                struct CodeNode *node = new CodeNode;
-                node->code = std::string("ret ") + std::string($2) + std::string("\n");
-                $$ = node;
+                        struct CodeNode *node = new CodeNode;
+                        node->code = std::string("ret ") + std::string($2) + std::string("\n");
+                        $$ = node;
+}
+*/
+return_statement: RETURN expressions SEMICOLON {
+                        //struct CodeNode *temp = create_temporary_variable();
+                        struct CodeNode *node = new CodeNode;
+                        //node->code = temp->code;
+                        node->code += $2->code;
+                        node->code += std::string("ret ") + $2->name + std::string("\n");
+                        $$ = node;
 }
         ;
 
@@ -694,7 +708,7 @@ function_call: TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN {
                 struct CodeNode *temp = create_temporary_variable();
                 struct CodeNode *node = new CodeNode;
                 node->code = $3->code;
-                node->code += temp->code;
+                node->code += temp->code + "\n";
                 node->code += "call " + std::string($1) + ", " + temp->name + std::string("\n");
                 $$ = node;
 }
@@ -710,6 +724,7 @@ expressions: %empty {
                 struct CodeNode *exprs = $1;
                 struct CodeNode *node = new CodeNode;
                 node->code = exprs->code + expr->code;
+                node->name = expr->name;
                 $$ = node;
 }
            ;
@@ -781,6 +796,9 @@ expression: variable {
 
 int main(void) {
   yyparse();
+                errchk_does_main_exist();
+                printf("%s", globalCodeParse->code.c_str());
+                print_symbol_table();
 }
 
 void yyerror(const char *s) {

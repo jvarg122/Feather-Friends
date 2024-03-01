@@ -9,8 +9,17 @@ chirp mul(egg a, egg b) {
 chirp main() {
     egg a;
     egg b;
-    a = add(10, 2);
-    squawk(a);
-    b = mul(a, a + b);
-    squawk(b);
+    egg c;
+    egg d;
+
+    a = 100;
+    b = 50;
+
+    V # should print 150
+    c = add(a, b);
+    squawk(c);
+
+    V # should print "22500"
+    d = mul(c, a + b);
+    squawk(d);
 }

@@ -1,0 +1,44 @@
+func add
+. a
+. b
+= b, $0
+= a, $1
+. __temp0__
++ __temp0__, a, b
+ret __temp0__
+endfunc
+
+func mul
+. a
+. b
+= b, $0
+= a, $1
+. __temp1__
+* __temp1__, a, b
+ret __temp1__
+endfunc
+
+func main
+. a
+. b
+. c
+. d
+= a, 100
+= b, 50
+. __temp2__
+param a
+param b
+. __temp2__
+call add, __temp2__
+= c, __temp2__
+.> __temp2__
+. __temp4__
+param c
+param __temp3__
+. __temp3__
++ __temp3__, a, b
+. __temp4__
+call mul, __temp4__
+= d, __temp4__
+.> __temp4__
+endfunc
