@@ -1,11 +1,11 @@
 chirp main() {
   egg i;
   i = 0;
-  nest i < 10 {
-    fly i >= 4 {
+  nest i <= 10 {
+    squawk(i);
+    fly i > 2 {
       roast;
     }
-    squawk(i);
     i = i + 1;
   }
 }

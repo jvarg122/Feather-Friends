@@ -63,41 +63,43 @@ Grammar
    34 else_statement: ELSE LEFTCURLY statement RIGHTCURLY
    35               | %empty
 
-   36 while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY
+   36 while_statement: WHILE boolean_expressions while_store LEFTCURLY statements RIGHTCURLY
 
-   37 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON
+   37 while_store: %empty
 
-   38 boolean_expressions: expression GREATER expression
-   39                    | expression LESS expression
-   40                    | expression LESSEQUAL expression
-   41                    | expression GREATEREQUAL expression
-   42                    | expression EQUALITY expression
-   43                    | expression NOTEQUAL expression
+   38 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON
 
-   44 new_variable: type TOKEN_IDENTIFIER SEMICOLON
-   45             | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON
+   39 boolean_expressions: expression GREATER expression
+   40                    | expression LESS expression
+   41                    | expression LESSEQUAL expression
+   42                    | expression GREATEREQUAL expression
+   43                    | expression EQUALITY expression
+   44                    | expression NOTEQUAL expression
 
-   46 variable: NUMBER
-   47         | TOKEN_IDENTIFIER
-   48         | array_get_pointer
-   49         | function_call
+   45 new_variable: type TOKEN_IDENTIFIER SEMICOLON
+   46             | type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON
 
-   50 type: INT
+   47 variable: NUMBER
+   48         | TOKEN_IDENTIFIER
+   49         | array_get_pointer
+   50         | function_call
 
-   51 print: PRINT LEFTPAREN variable RIGHTPAREN SEMICOLON
+   51 type: INT
 
-   52 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN
+   52 print: PRINT LEFTPAREN variable RIGHTPAREN SEMICOLON
 
-   53 expressions: %empty
-   54            | expressions expression
+   53 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN
 
-   55 expression: variable
-   56           | expression PLUS expression
-   57           | expression SUBTRACT expression
-   58           | expression MULTIPLY expression
-   59           | expression DIVIDE expression
-   60           | expression MODULUS expression
-   61           | LEFTPAREN expression RIGHTPAREN
+   54 expressions: %empty
+   55            | expressions expression
+
+   56 expression: variable
+   57           | expression PLUS expression
+   58           | expression SUBTRACT expression
+   59           | expression MULTIPLY expression
+   60           | expression DIVIDE expression
+   61           | expression MODULUS expression
+   62           | LEFTPAREN expression RIGHTPAREN
 
 
 Terminals, with rules where they appear
@@ -106,36 +108,36 @@ $end (0) 0
 error (256)
 FUNC (258) 3
 RETURN (259) 33
-INT (260) 50
-PRINT (261) 51
+INT (260) 51
+PRINT (261) 52
 BREAK (262) 24
-LEFTPAREN (263) 4 37 51 52 61
-RIGHTPAREN (264) 4 37 51 52 61
+LEFTPAREN (263) 4 38 52 53 62
+RIGHTPAREN (264) 4 38 52 53 62
 LEFTCURLY (265) 4 26 34 36
 RIGHTCURLY (266) 4 26 34 36
 COMMA (267) 8 11
-SEMICOLON (268) 24 25 27 29 30 31 32 33 37 44 45 51
-PLUS (269) 56
-SUBTRACT (270) 57
-MULTIPLY (271) 58
-DIVIDE (272) 59
-MODULUS (273) 60
-ASSIGN (274) 29 30 31 32 45
-READ (275) 37
+SEMICOLON (268) 24 25 27 29 30 31 32 33 38 45 46 52
+PLUS (269) 57
+SUBTRACT (270) 58
+MULTIPLY (271) 59
+DIVIDE (272) 60
+MODULUS (273) 61
+ASSIGN (274) 29 30 31 32 46
+READ (275) 38
 WHILE (276) 36
 IF (277) 26
 ELSE (278) 34
 CONTINUE (279) 25
 LEFTBRACKET (280) 27 28 31 32
 RIGHTBRACKET (281) 27 28 31 32
-LESS (282) 39
-LESSEQUAL (283) 40
-GREATER (284) 38
-GREATEREQUAL (285) 41
-EQUALITY (286) 42
-NOTEQUAL (287) 43
-NUMBER (288) 27 28 29 31 32 45 46
-TOKEN_IDENTIFIER (289) 3 7 8 27 28 29 30 31 32 37 44 45 47 52
+LESS (282) 40
+LESSEQUAL (283) 41
+GREATER (284) 39
+GREATEREQUAL (285) 42
+EQUALITY (286) 43
+NOTEQUAL (287) 44
+NUMBER (288) 27 28 29 31 32 46 47
+TOKEN_IDENTIFIER (289) 3 7 8 27 28 29 30 31 32 38 45 46 48 53
 
 
 Nonterminals, with rules where they appear
@@ -153,7 +155,7 @@ new_parameters (39)
 new_parameter (40)
     on left: 7 8, on right: 6 8
 parameters (41)
-    on left: 9 10, on right: 52
+    on left: 9 10, on right: 53
 parameter (42)
     on left: 11 12, on right: 10 11
 statements (43)
@@ -165,7 +167,7 @@ if_statement (45)
 new_array (46)
     on left: 27, on right: 16
 array_get_pointer (47)
-    on left: 28, on right: 48
+    on left: 28, on right: 49
 assign_statement (48)
     on left: 29 30 31 32, on right: 23
 return_statement (49)
@@ -174,25 +176,27 @@ else_statement (50)
     on left: 34 35, on right: 26
 while_statement (51)
     on left: 36, on right: 20
-read_statement (52)
-    on left: 37, on right: 21
-boolean_expressions (53)
-    on left: 38 39 40 41 42 43, on right: 26 36
-new_variable (54)
-    on left: 44 45, on right: 15
-variable (55)
-    on left: 46 47 48 49, on right: 51 55
-type (56)
-    on left: 50, on right: 7 8 27 44 45
-print (57)
-    on left: 51, on right: 18
-function_call (58)
-    on left: 52, on right: 17 49
-expressions (59)
-    on left: 53 54, on right: 11 12 30 32 33 54
-expression (60)
-    on left: 55 56 57 58 59 60 61, on right: 38 39 40 41 42 43 54 56
-    57 58 59 60 61
+while_store (52)
+    on left: 37, on right: 36
+read_statement (53)
+    on left: 38, on right: 21
+boolean_expressions (54)
+    on left: 39 40 41 42 43 44, on right: 26 36
+new_variable (55)
+    on left: 45 46, on right: 15
+variable (56)
+    on left: 47 48 49 50, on right: 52 56
+type (57)
+    on left: 51, on right: 7 8 27 45 46
+print (58)
+    on left: 52, on right: 18
+function_call (59)
+    on left: 53, on right: 17 50
+expressions (60)
+    on left: 54 55, on right: 11 12 30 32 33 55
+expression (61)
+    on left: 56 57 58 59 60 61 62, on right: 39 40 41 42 43 44 55 57
+    58 59 60 61 62
 
 
 State 0
@@ -266,9 +270,9 @@ State 7
 
 State 8
 
-   50 type: INT .
+   51 type: INT .
 
-    $default  reduce using rule 50 (type)
+    $default  reduce using rule 51 (type)
 
 
 State 9
@@ -369,14 +373,14 @@ State 18
 
    33 return_statement: RETURN . expressions SEMICOLON
 
-    $default  reduce using rule 53 (expressions)
+    $default  reduce using rule 54 (expressions)
 
     expressions  go to state 38
 
 
 State 19
 
-   51 print: PRINT . LEFTPAREN variable RIGHTPAREN SEMICOLON
+   52 print: PRINT . LEFTPAREN variable RIGHTPAREN SEMICOLON
 
     LEFTPAREN  shift, and go to state 39
 
@@ -397,14 +401,14 @@ State 21
 
 State 22
 
-   37 read_statement: READ . LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON
+   38 read_statement: READ . LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON
 
     LEFTPAREN  shift, and go to state 41
 
 
 State 23
 
-   36 while_statement: WHILE . boolean_expressions LEFTCURLY statements RIGHTCURLY
+   36 while_statement: WHILE . boolean_expressions while_store LEFTCURLY statements RIGHTCURLY
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -445,7 +449,7 @@ State 26
    30                 | TOKEN_IDENTIFIER . ASSIGN expressions SEMICOLON
    31                 | TOKEN_IDENTIFIER . LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN NUMBER SEMICOLON
    32                 | TOKEN_IDENTIFIER . LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN expressions SEMICOLON
-   52 function_call: TOKEN_IDENTIFIER . LEFTPAREN parameters RIGHTPAREN
+   53 function_call: TOKEN_IDENTIFIER . LEFTPAREN parameters RIGHTPAREN
 
     LEFTPAREN    shift, and go to state 52
     ASSIGN       shift, and go to state 53
@@ -511,8 +515,8 @@ State 34
 State 35
 
    27 new_array: type . LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON
-   44 new_variable: type . TOKEN_IDENTIFIER SEMICOLON
-   45             | type . TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON
+   45 new_variable: type . TOKEN_IDENTIFIER SEMICOLON
+   46             | type . TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON
 
     LEFTBRACKET       shift, and go to state 55
     TOKEN_IDENTIFIER  shift, and go to state 56
@@ -535,7 +539,7 @@ State 37
 State 38
 
    33 return_statement: RETURN expressions . SEMICOLON
-   54 expressions: expressions . expression
+   55 expressions: expressions . expression
 
     LEFTPAREN         shift, and go to state 42
     SEMICOLON         shift, and go to state 57
@@ -550,7 +554,7 @@ State 38
 
 State 39
 
-   51 print: PRINT LEFTPAREN . variable RIGHTPAREN SEMICOLON
+   52 print: PRINT LEFTPAREN . variable RIGHTPAREN SEMICOLON
 
     NUMBER            shift, and go to state 43
     TOKEN_IDENTIFIER  shift, and go to state 44
@@ -569,14 +573,14 @@ State 40
 
 State 41
 
-   37 read_statement: READ LEFTPAREN . TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON
+   38 read_statement: READ LEFTPAREN . TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON
 
     TOKEN_IDENTIFIER  shift, and go to state 60
 
 
 State 42
 
-   61 expression: LEFTPAREN . expression RIGHTPAREN
+   62 expression: LEFTPAREN . expression RIGHTPAREN
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -590,65 +594,67 @@ State 42
 
 State 43
 
-   46 variable: NUMBER .
+   47 variable: NUMBER .
 
-    $default  reduce using rule 46 (variable)
+    $default  reduce using rule 47 (variable)
 
 
 State 44
 
    28 array_get_pointer: TOKEN_IDENTIFIER . LEFTBRACKET NUMBER RIGHTBRACKET
-   47 variable: TOKEN_IDENTIFIER .
-   52 function_call: TOKEN_IDENTIFIER . LEFTPAREN parameters RIGHTPAREN
+   48 variable: TOKEN_IDENTIFIER .
+   53 function_call: TOKEN_IDENTIFIER . LEFTPAREN parameters RIGHTPAREN
 
     LEFTPAREN    shift, and go to state 52
     LEFTBRACKET  shift, and go to state 62
 
-    LEFTPAREN  [reduce using rule 47 (variable)]
-    $default   reduce using rule 47 (variable)
+    LEFTPAREN  [reduce using rule 48 (variable)]
+    $default   reduce using rule 48 (variable)
 
 
 State 45
 
-   48 variable: array_get_pointer .
-
-    $default  reduce using rule 48 (variable)
-
-
-State 46
-
-   36 while_statement: WHILE boolean_expressions . LEFTCURLY statements RIGHTCURLY
-
-    LEFTCURLY  shift, and go to state 63
-
-
-State 47
-
-   55 expression: variable .
-
-    $default  reduce using rule 55 (expression)
-
-
-State 48
-
-   49 variable: function_call .
+   49 variable: array_get_pointer .
 
     $default  reduce using rule 49 (variable)
 
 
+State 46
+
+   36 while_statement: WHILE boolean_expressions . while_store LEFTCURLY statements RIGHTCURLY
+
+    $default  reduce using rule 37 (while_store)
+
+    while_store  go to state 63
+
+
+State 47
+
+   56 expression: variable .
+
+    $default  reduce using rule 56 (expression)
+
+
+State 48
+
+   50 variable: function_call .
+
+    $default  reduce using rule 50 (variable)
+
+
 State 49
 
-   38 boolean_expressions: expression . GREATER expression
-   39                    | expression . LESS expression
-   40                    | expression . LESSEQUAL expression
-   41                    | expression . GREATEREQUAL expression
-   42                    | expression . EQUALITY expression
-   43                    | expression . NOTEQUAL expression
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
+   39 boolean_expressions: expression . GREATER expression
+   40                    | expression . LESS expression
+   41                    | expression . LESSEQUAL expression
+   42                    | expression . GREATEREQUAL expression
+   43                    | expression . EQUALITY expression
+   44                    | expression . NOTEQUAL expression
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
 
     PLUS          shift, and go to state 64
     SUBTRACT      shift, and go to state 65
@@ -679,11 +685,11 @@ State 51
 
 State 52
 
-   52 function_call: TOKEN_IDENTIFIER LEFTPAREN . parameters RIGHTPAREN
+   53 function_call: TOKEN_IDENTIFIER LEFTPAREN . parameters RIGHTPAREN
 
     RIGHTPAREN  reduce using rule 9 (parameters)
-    RIGHTPAREN  [reduce using rule 53 (expressions)]
-    $default    reduce using rule 53 (expressions)
+    RIGHTPAREN  [reduce using rule 54 (expressions)]
+    $default    reduce using rule 54 (expressions)
 
     parameters   go to state 76
     parameter    go to state 77
@@ -697,8 +703,8 @@ State 53
 
     NUMBER  shift, and go to state 79
 
-    NUMBER    [reduce using rule 53 (expressions)]
-    $default  reduce using rule 53 (expressions)
+    NUMBER    [reduce using rule 54 (expressions)]
+    $default  reduce using rule 54 (expressions)
 
     expressions  go to state 80
 
@@ -720,8 +726,8 @@ State 55
 
 State 56
 
-   44 new_variable: type TOKEN_IDENTIFIER . SEMICOLON
-   45             | type TOKEN_IDENTIFIER . ASSIGN NUMBER SEMICOLON
+   45 new_variable: type TOKEN_IDENTIFIER . SEMICOLON
+   46             | type TOKEN_IDENTIFIER . ASSIGN NUMBER SEMICOLON
 
     SEMICOLON  shift, and go to state 83
     ASSIGN     shift, and go to state 84
@@ -736,12 +742,12 @@ State 57
 
 State 58
 
-   54 expressions: expressions expression .
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
+   55 expressions: expressions expression .
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
 
     PLUS      shift, and go to state 64
     SUBTRACT  shift, and go to state 65
@@ -749,31 +755,31 @@ State 58
     DIVIDE    shift, and go to state 67
     MODULUS   shift, and go to state 68
 
-    $default  reduce using rule 54 (expressions)
+    $default  reduce using rule 55 (expressions)
 
 
 State 59
 
-   51 print: PRINT LEFTPAREN variable . RIGHTPAREN SEMICOLON
+   52 print: PRINT LEFTPAREN variable . RIGHTPAREN SEMICOLON
 
     RIGHTPAREN  shift, and go to state 85
 
 
 State 60
 
-   37 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER . RIGHTPAREN SEMICOLON
+   38 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER . RIGHTPAREN SEMICOLON
 
     RIGHTPAREN  shift, and go to state 86
 
 
 State 61
 
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
-   61           | LEFTPAREN expression . RIGHTPAREN
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
+   62           | LEFTPAREN expression . RIGHTPAREN
 
     RIGHTPAREN  shift, and go to state 87
     PLUS        shift, and go to state 64
@@ -792,16 +798,14 @@ State 62
 
 State 63
 
-   36 while_statement: WHILE boolean_expressions LEFTCURLY . statements RIGHTCURLY
+   36 while_statement: WHILE boolean_expressions while_store . LEFTCURLY statements RIGHTCURLY
 
-    $default  reduce using rule 13 (statements)
-
-    statements  go to state 89
+    LEFTCURLY  shift, and go to state 89
 
 
 State 64
 
-   56 expression: expression PLUS . expression
+   57 expression: expression PLUS . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -815,7 +819,7 @@ State 64
 
 State 65
 
-   57 expression: expression SUBTRACT . expression
+   58 expression: expression SUBTRACT . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -829,7 +833,7 @@ State 65
 
 State 66
 
-   58 expression: expression MULTIPLY . expression
+   59 expression: expression MULTIPLY . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -843,7 +847,7 @@ State 66
 
 State 67
 
-   59 expression: expression DIVIDE . expression
+   60 expression: expression DIVIDE . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -857,7 +861,7 @@ State 67
 
 State 68
 
-   60 expression: expression MODULUS . expression
+   61 expression: expression MODULUS . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -871,7 +875,7 @@ State 68
 
 State 69
 
-   39 boolean_expressions: expression LESS . expression
+   40 boolean_expressions: expression LESS . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -885,7 +889,7 @@ State 69
 
 State 70
 
-   40 boolean_expressions: expression LESSEQUAL . expression
+   41 boolean_expressions: expression LESSEQUAL . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -899,7 +903,7 @@ State 70
 
 State 71
 
-   38 boolean_expressions: expression GREATER . expression
+   39 boolean_expressions: expression GREATER . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -913,7 +917,7 @@ State 71
 
 State 72
 
-   41 boolean_expressions: expression GREATEREQUAL . expression
+   42 boolean_expressions: expression GREATEREQUAL . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -927,7 +931,7 @@ State 72
 
 State 73
 
-   42 boolean_expressions: expression EQUALITY . expression
+   43 boolean_expressions: expression EQUALITY . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -941,7 +945,7 @@ State 73
 
 State 74
 
-   43 boolean_expressions: expression NOTEQUAL . expression
+   44 boolean_expressions: expression NOTEQUAL . expression
 
     LEFTPAREN         shift, and go to state 42
     NUMBER            shift, and go to state 43
@@ -964,7 +968,7 @@ State 75
 
 State 76
 
-   52 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters . RIGHTPAREN
+   53 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters . RIGHTPAREN
 
     RIGHTPAREN  shift, and go to state 102
 
@@ -980,7 +984,7 @@ State 78
 
    11 parameter: expressions . COMMA parameter
    12          | expressions .
-   54 expressions: expressions . expression
+   55 expressions: expressions . expression
 
     LEFTPAREN         shift, and go to state 42
     COMMA             shift, and go to state 103
@@ -1005,7 +1009,7 @@ State 79
 State 80
 
    30 assign_statement: TOKEN_IDENTIFIER ASSIGN expressions . SEMICOLON
-   54 expressions: expressions . expression
+   55 expressions: expressions . expression
 
     LEFTPAREN         shift, and go to state 42
     SEMICOLON         shift, and go to state 105
@@ -1035,37 +1039,37 @@ State 82
 
 State 83
 
-   44 new_variable: type TOKEN_IDENTIFIER SEMICOLON .
+   45 new_variable: type TOKEN_IDENTIFIER SEMICOLON .
 
-    $default  reduce using rule 44 (new_variable)
+    $default  reduce using rule 45 (new_variable)
 
 
 State 84
 
-   45 new_variable: type TOKEN_IDENTIFIER ASSIGN . NUMBER SEMICOLON
+   46 new_variable: type TOKEN_IDENTIFIER ASSIGN . NUMBER SEMICOLON
 
     NUMBER  shift, and go to state 108
 
 
 State 85
 
-   51 print: PRINT LEFTPAREN variable RIGHTPAREN . SEMICOLON
+   52 print: PRINT LEFTPAREN variable RIGHTPAREN . SEMICOLON
 
     SEMICOLON  shift, and go to state 109
 
 
 State 86
 
-   37 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN . SEMICOLON
+   38 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN . SEMICOLON
 
     SEMICOLON  shift, and go to state 110
 
 
 State 87
 
-   61 expression: LEFTPAREN expression RIGHTPAREN .
+   62 expression: LEFTPAREN expression RIGHTPAREN .
 
-    $default  reduce using rule 61 (expression)
+    $default  reduce using rule 62 (expression)
 
 
 State 88
@@ -1077,64 +1081,21 @@ State 88
 
 State 89
 
-   14 statements: statements . statement
-   36 while_statement: WHILE boolean_expressions LEFTCURLY statements . RIGHTCURLY
+   36 while_statement: WHILE boolean_expressions while_store LEFTCURLY . statements RIGHTCURLY
 
-    RETURN            shift, and go to state 18
-    INT               shift, and go to state 8
-    PRINT             shift, and go to state 19
-    BREAK             shift, and go to state 20
-    RIGHTCURLY        shift, and go to state 112
-    READ              shift, and go to state 22
-    WHILE             shift, and go to state 23
-    IF                shift, and go to state 24
-    CONTINUE          shift, and go to state 25
-    TOKEN_IDENTIFIER  shift, and go to state 26
+    $default  reduce using rule 13 (statements)
 
-    statement         go to state 27
-    if_statement      go to state 28
-    new_array         go to state 29
-    assign_statement  go to state 30
-    return_statement  go to state 31
-    while_statement   go to state 32
-    read_statement    go to state 33
-    new_variable      go to state 34
-    type              go to state 35
-    print             go to state 36
-    function_call     go to state 37
+    statements  go to state 112
 
 
 State 90
 
-   56 expression: expression . PLUS expression
-   56           | expression PLUS expression .
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
-
-    PLUS      shift, and go to state 64
-    SUBTRACT  shift, and go to state 65
-    MULTIPLY  shift, and go to state 66
-    DIVIDE    shift, and go to state 67
-    MODULUS   shift, and go to state 68
-
-    PLUS      [reduce using rule 56 (expression)]
-    SUBTRACT  [reduce using rule 56 (expression)]
-    MULTIPLY  [reduce using rule 56 (expression)]
-    DIVIDE    [reduce using rule 56 (expression)]
-    MODULUS   [reduce using rule 56 (expression)]
-    $default  reduce using rule 56 (expression)
-
-
-State 91
-
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   57           | expression SUBTRACT expression .
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
+   57 expression: expression . PLUS expression
+   57           | expression PLUS expression .
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
 
     PLUS      shift, and go to state 64
     SUBTRACT  shift, and go to state 65
@@ -1150,14 +1111,14 @@ State 91
     $default  reduce using rule 57 (expression)
 
 
-State 92
+State 91
 
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   58           | expression MULTIPLY expression .
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   58           | expression SUBTRACT expression .
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
 
     PLUS      shift, and go to state 64
     SUBTRACT  shift, and go to state 65
@@ -1173,14 +1134,14 @@ State 92
     $default  reduce using rule 58 (expression)
 
 
-State 93
+State 92
 
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   59           | expression DIVIDE expression .
-   60           | expression . MODULUS expression
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   59           | expression MULTIPLY expression .
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
 
     PLUS      shift, and go to state 64
     SUBTRACT  shift, and go to state 65
@@ -1196,14 +1157,14 @@ State 93
     $default  reduce using rule 59 (expression)
 
 
-State 94
+State 93
 
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
-   60           | expression MODULUS expression .
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   60           | expression DIVIDE expression .
+   61           | expression . MODULUS expression
 
     PLUS      shift, and go to state 64
     SUBTRACT  shift, and go to state 65
@@ -1219,14 +1180,14 @@ State 94
     $default  reduce using rule 60 (expression)
 
 
-State 95
+State 94
 
-   39 boolean_expressions: expression LESS expression .
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
+   61           | expression MODULUS expression .
 
     PLUS      shift, and go to state 64
     SUBTRACT  shift, and go to state 65
@@ -1234,17 +1195,22 @@ State 95
     DIVIDE    shift, and go to state 67
     MODULUS   shift, and go to state 68
 
-    $default  reduce using rule 39 (boolean_expressions)
+    PLUS      [reduce using rule 61 (expression)]
+    SUBTRACT  [reduce using rule 61 (expression)]
+    MULTIPLY  [reduce using rule 61 (expression)]
+    DIVIDE    [reduce using rule 61 (expression)]
+    MODULUS   [reduce using rule 61 (expression)]
+    $default  reduce using rule 61 (expression)
 
 
-State 96
+State 95
 
-   40 boolean_expressions: expression LESSEQUAL expression .
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
+   40 boolean_expressions: expression LESS expression .
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
 
     PLUS      shift, and go to state 64
     SUBTRACT  shift, and go to state 65
@@ -1255,32 +1221,14 @@ State 96
     $default  reduce using rule 40 (boolean_expressions)
 
 
-State 97
+State 96
 
-   38 boolean_expressions: expression GREATER expression .
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
-
-    PLUS      shift, and go to state 64
-    SUBTRACT  shift, and go to state 65
-    MULTIPLY  shift, and go to state 66
-    DIVIDE    shift, and go to state 67
-    MODULUS   shift, and go to state 68
-
-    $default  reduce using rule 38 (boolean_expressions)
-
-
-State 98
-
-   41 boolean_expressions: expression GREATEREQUAL expression .
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
+   41 boolean_expressions: expression LESSEQUAL expression .
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
 
     PLUS      shift, and go to state 64
     SUBTRACT  shift, and go to state 65
@@ -1291,14 +1239,32 @@ State 98
     $default  reduce using rule 41 (boolean_expressions)
 
 
-State 99
+State 97
 
-   42 boolean_expressions: expression EQUALITY expression .
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
+   39 boolean_expressions: expression GREATER expression .
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
+
+    PLUS      shift, and go to state 64
+    SUBTRACT  shift, and go to state 65
+    MULTIPLY  shift, and go to state 66
+    DIVIDE    shift, and go to state 67
+    MODULUS   shift, and go to state 68
+
+    $default  reduce using rule 39 (boolean_expressions)
+
+
+State 98
+
+   42 boolean_expressions: expression GREATEREQUAL expression .
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
 
     PLUS      shift, and go to state 64
     SUBTRACT  shift, and go to state 65
@@ -1309,14 +1275,14 @@ State 99
     $default  reduce using rule 42 (boolean_expressions)
 
 
-State 100
+State 99
 
-   43 boolean_expressions: expression NOTEQUAL expression .
-   56 expression: expression . PLUS expression
-   57           | expression . SUBTRACT expression
-   58           | expression . MULTIPLY expression
-   59           | expression . DIVIDE expression
-   60           | expression . MODULUS expression
+   43 boolean_expressions: expression EQUALITY expression .
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
 
     PLUS      shift, and go to state 64
     SUBTRACT  shift, and go to state 65
@@ -1325,6 +1291,24 @@ State 100
     MODULUS   shift, and go to state 68
 
     $default  reduce using rule 43 (boolean_expressions)
+
+
+State 100
+
+   44 boolean_expressions: expression NOTEQUAL expression .
+   57 expression: expression . PLUS expression
+   58           | expression . SUBTRACT expression
+   59           | expression . MULTIPLY expression
+   60           | expression . DIVIDE expression
+   61           | expression . MODULUS expression
+
+    PLUS      shift, and go to state 64
+    SUBTRACT  shift, and go to state 65
+    MULTIPLY  shift, and go to state 66
+    DIVIDE    shift, and go to state 67
+    MODULUS   shift, and go to state 68
+
+    $default  reduce using rule 44 (boolean_expressions)
 
 
 State 101
@@ -1358,16 +1342,16 @@ State 101
 
 State 102
 
-   52 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN .
+   53 function_call: TOKEN_IDENTIFIER LEFTPAREN parameters RIGHTPAREN .
 
-    $default  reduce using rule 52 (function_call)
+    $default  reduce using rule 53 (function_call)
 
 
 State 103
 
    11 parameter: expressions COMMA . parameter
 
-    $default  reduce using rule 53 (expressions)
+    $default  reduce using rule 54 (expressions)
 
     parameter    go to state 114
     expressions  go to state 78
@@ -1404,23 +1388,23 @@ State 107
 
 State 108
 
-   45 new_variable: type TOKEN_IDENTIFIER ASSIGN NUMBER . SEMICOLON
+   46 new_variable: type TOKEN_IDENTIFIER ASSIGN NUMBER . SEMICOLON
 
     SEMICOLON  shift, and go to state 117
 
 
 State 109
 
-   51 print: PRINT LEFTPAREN variable RIGHTPAREN SEMICOLON .
+   52 print: PRINT LEFTPAREN variable RIGHTPAREN SEMICOLON .
 
-    $default  reduce using rule 51 (print)
+    $default  reduce using rule 52 (print)
 
 
 State 110
 
-   37 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON .
+   38 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON .
 
-    $default  reduce using rule 37 (read_statement)
+    $default  reduce using rule 38 (read_statement)
 
 
 State 111
@@ -1432,20 +1416,42 @@ State 111
 
 State 112
 
-   36 while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY .
+   14 statements: statements . statement
+   36 while_statement: WHILE boolean_expressions while_store LEFTCURLY statements . RIGHTCURLY
 
-    $default  reduce using rule 36 (while_statement)
+    RETURN            shift, and go to state 18
+    INT               shift, and go to state 8
+    PRINT             shift, and go to state 19
+    BREAK             shift, and go to state 20
+    RIGHTCURLY        shift, and go to state 118
+    READ              shift, and go to state 22
+    WHILE             shift, and go to state 23
+    IF                shift, and go to state 24
+    CONTINUE          shift, and go to state 25
+    TOKEN_IDENTIFIER  shift, and go to state 26
+
+    statement         go to state 27
+    if_statement      go to state 28
+    new_array         go to state 29
+    assign_statement  go to state 30
+    return_statement  go to state 31
+    while_statement   go to state 32
+    read_statement    go to state 33
+    new_variable      go to state 34
+    type              go to state 35
+    print             go to state 36
+    function_call     go to state 37
 
 
 State 113
 
    26 if_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY . else_statement
 
-    ELSE  shift, and go to state 118
+    ELSE  shift, and go to state 119
 
     $default  reduce using rule 35 (else_statement)
 
-    else_statement  go to state 119
+    else_statement  go to state 120
 
 
 State 114
@@ -1460,56 +1466,63 @@ State 115
    31 assign_statement: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN . NUMBER SEMICOLON
    32                 | TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN . expressions SEMICOLON
 
-    NUMBER  shift, and go to state 120
+    NUMBER  shift, and go to state 121
 
-    NUMBER    [reduce using rule 53 (expressions)]
-    $default  reduce using rule 53 (expressions)
+    NUMBER    [reduce using rule 54 (expressions)]
+    $default  reduce using rule 54 (expressions)
 
-    expressions  go to state 121
+    expressions  go to state 122
 
 
 State 116
 
    27 new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER . SEMICOLON
 
-    SEMICOLON  shift, and go to state 122
+    SEMICOLON  shift, and go to state 123
 
 
 State 117
 
-   45 new_variable: type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON .
+   46 new_variable: type TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON .
 
-    $default  reduce using rule 45 (new_variable)
+    $default  reduce using rule 46 (new_variable)
 
 
 State 118
 
-   34 else_statement: ELSE . LEFTCURLY statement RIGHTCURLY
+   36 while_statement: WHILE boolean_expressions while_store LEFTCURLY statements RIGHTCURLY .
 
-    LEFTCURLY  shift, and go to state 123
+    $default  reduce using rule 36 (while_statement)
 
 
 State 119
+
+   34 else_statement: ELSE . LEFTCURLY statement RIGHTCURLY
+
+    LEFTCURLY  shift, and go to state 124
+
+
+State 120
 
    26 if_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statement .
 
     $default  reduce using rule 26 (if_statement)
 
 
-State 120
+State 121
 
    31 assign_statement: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN NUMBER . SEMICOLON
 
-    SEMICOLON  shift, and go to state 124
+    SEMICOLON  shift, and go to state 125
 
 
-State 121
+State 122
 
    32 assign_statement: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN expressions . SEMICOLON
-   54 expressions: expressions . expression
+   55 expressions: expressions . expression
 
     LEFTPAREN         shift, and go to state 42
-    SEMICOLON         shift, and go to state 125
+    SEMICOLON         shift, and go to state 126
     NUMBER            shift, and go to state 43
     TOKEN_IDENTIFIER  shift, and go to state 44
 
@@ -1519,14 +1532,14 @@ State 121
     expression         go to state 58
 
 
-State 122
+State 123
 
    27 new_array: type LEFTBRACKET NUMBER RIGHTBRACKET TOKEN_IDENTIFIER SEMICOLON .
 
     $default  reduce using rule 27 (new_array)
 
 
-State 123
+State 124
 
    34 else_statement: ELSE LEFTCURLY . statement RIGHTCURLY
 
@@ -1540,7 +1553,7 @@ State 123
     CONTINUE          shift, and go to state 25
     TOKEN_IDENTIFIER  shift, and go to state 26
 
-    statement         go to state 126
+    statement         go to state 127
     if_statement      go to state 28
     new_array         go to state 29
     assign_statement  go to state 30
@@ -1553,28 +1566,28 @@ State 123
     function_call     go to state 37
 
 
-State 124
+State 125
 
    31 assign_statement: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN NUMBER SEMICOLON .
 
     $default  reduce using rule 31 (assign_statement)
 
 
-State 125
+State 126
 
    32 assign_statement: TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN expressions SEMICOLON .
 
     $default  reduce using rule 32 (assign_statement)
 
 
-State 126
+State 127
 
    34 else_statement: ELSE LEFTCURLY statement . RIGHTCURLY
 
-    RIGHTCURLY  shift, and go to state 127
+    RIGHTCURLY  shift, and go to state 128
 
 
-State 127
+State 128
 
    34 else_statement: ELSE LEFTCURLY statement RIGHTCURLY .
 

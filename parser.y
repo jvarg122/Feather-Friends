@@ -88,6 +88,12 @@ Function *get_function() {
 // find the symbol you are looking for.
 // you may want to extend "find" to handle different types of "Integer" vs "Array"
 bool find(std::string &value, Type type = Integer) {
+  /*
+  std::stringstream sstm;
+  sstm << value;
+  printf(sstm.str().c_str());
+  */
+
   Function *f = get_function();
   if(f == emptyfn) {
     // no function found
@@ -103,6 +109,12 @@ bool find(std::string &value, Type type = Integer) {
 }
 
 bool find_function(std::string value) {
+/*
+  std::stringstream sstm;
+  sstm << value;
+  printf(sstm.str().c_str());
+*/
+
     for(int i=0; i<symbol_table.size(); i++) {
         if(strcmp(symbol_table[i].name.c_str(), value.c_str()) == 0)
         {
@@ -407,12 +419,12 @@ statement: new_variable {
 }
         | BREAK SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string(":= end") + currentWhileLoop->endLabel->name;
+                node->code = std::string(":= end") + currentWhileLoop->endLabel->name + "\n";
                 $$ = node;
 }
         | CONTINUE SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string(":= end") + currentWhileLoop->beginLabel->name;
+                node->code = std::string(":= end") + currentWhileLoop->beginLabel->name + "\n";
                 $$ = node;
 }
         ;
@@ -538,24 +550,28 @@ else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
 }
              ;
 
-while_statement: WHILE boolean_expressions LEFTCURLY statements RIGHTCURLY {
+while_statement: WHILE boolean_expressions while_store LEFTCURLY statements RIGHTCURLY  {
     struct CodeNode *node = new CodeNode;
+    node->code = ": " + currentWhileLoop->beginLabel->name + "\n";
+    node->code += $2->code; 
+    node->code += "?:= " + currentWhileLoop->endLabel->name + ", " + $2->name + "\n";
+    node->code += $5->code; 
+    node->code += ":= " + currentWhileLoop->beginLabel->name + "\n";
+    node->code += ": " + currentWhileLoop->endLabel->name + "\n";
+    $$ = node;
+}
+        ;
+
+while_store : %empty {
     struct WhileLoop *loop = new WhileLoop;
     struct CodeNode *begin_loop_label = create_label();
     struct CodeNode *end_loop_label = create_label();
     loop->beginLabel = begin_loop_label;
     loop->endLabel = end_loop_label;
     currentWhileLoop = loop;
-
-    node->code = ":" + begin_loop_label->name + "\n";
-    node->code += $2->code; 
-    node->code += "?:= " + end_loop_label->name + ", " + $2->name + "\n";
-    node->code += $4->code; 
-    node->code += ":= " + begin_loop_label->name + "\n";
-    node->code += ":" + end_loop_label->name + "\n";
-    $$ = node;
 }
-        ;
+ 
+        
 
 read_statement: READ LEFTPAREN TOKEN_IDENTIFIER RIGHTPAREN SEMICOLON {
                 std::string variable_name = $3;
