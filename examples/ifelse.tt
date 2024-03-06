@@ -1,0 +1,17 @@
+chirp main() {
+    egg a;
+    egg b;
+    egg c;
+
+    
+    a = 100;
+    b = 50;
+    fly a < b {
+        c = b;
+    } land {
+        c = a;
+    }
+
+    V Should print out '100'.
+    squawk(c);
+}

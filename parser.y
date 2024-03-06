@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <string.h>
+#include <stack> 
 #include <sstream>
 
 enum Type { Integer, Array };
@@ -26,22 +27,28 @@ struct Function {
 
 struct WhileLoop{
     CodeNode *beginLabel;
+    CodeNode *loopBodyLabel;
     CodeNode *endLabel;
+};
+
+struct IfElse {
+    CodeNode *ifLabel;
+    CodeNode *endifLabel;
+    CodeNode *elseLabel;
 };
 
 int yylex();
 extern int yylineno;
 void yyerror(const char *s);
 int tempval = 0;
-int labelval = 0;
+int whileLabelval = 0;
+int ifElseLabelval = 0;
 int currentParameters = 0;
 const Function *emptyfn = new Function;
 CodeNode *globalCodeParse;
 CodeNode *currentTemp;
 CodeNode *currentLabel;
-WhileLoop *currentWhileLoop;
-
-
+std::stack<WhileLoop*> whileLoopStack; 
 std::vector <Function> symbol_table;
 
 CodeNode *create_temporary_variable(){
@@ -55,15 +62,42 @@ CodeNode *create_temporary_variable(){
   return temp;
 }
 
-CodeNode *create_label(){
+CodeNode *create_while_label(std::string labelName = "label"){
   struct CodeNode *label = new CodeNode;
   std::stringstream sstm;
-  sstm << "__label" << labelval << "__";
+  sstm << "__" << labelName << whileLabelval << "__";
   label->name = sstm.str();
   label->code = ". " + std::string(label->name);
   currentLabel = label;
-  labelval++;
   return label;
+}
+
+WhileLoop *create_while_loop() {
+    struct WhileLoop *loop = new WhileLoop;
+    loop->beginLabel = create_while_label("beginloop");
+    loop->loopBodyLabel = create_while_label("loopbody");
+    loop->endLabel = create_while_label("endloop");
+    whileLabelval++;
+    return loop;
+}
+
+CodeNode *create_ifelse_label(std::string labelName = "label"){
+  struct CodeNode *label = new CodeNode;
+  std::stringstream sstm;
+  sstm << "__" << labelName << ifElseLabelval << "__";
+  label->name = sstm.str();
+  label->code = ". " + std::string(label->name);
+  currentLabel = label;
+  return label;
+}
+
+IfElse *create_ifelse() {
+    struct IfElse *ifelse = new IfElse;
+    ifelse->ifLabel = create_ifelse_label("if_true");
+    ifelse->endifLabel = create_ifelse_label("endif");
+    ifelse->elseLabel = create_ifelse_label("else");
+    ifElseLabelval++;
+    return ifelse; 
 }
 
 // remember that Bison is a bottom up parser: that it parses leaf nodes first before
@@ -241,7 +275,7 @@ void errchk_assert_non_zero(std::string string_number) {
 %type <code_node> return_statement
 %type <code_node> assign_statement
 %type <code_node> if_statement
-%type <code_node> else_statement
+%type <code_node> ifelse_statement
 %type <code_node> while_statement
 %type <code_node> read_statement
 %type <code_node> new_variable
@@ -397,6 +431,11 @@ statement: new_variable {
                 node->code = $1->code;
                 $$ = node;
 }
+        | ifelse_statement {
+                struct CodeNode *node = new CodeNode;
+                node->code = $1->code;
+                $$ = node;
+}
         | while_statement {
                 struct CodeNode *node = new CodeNode;
                 node->code = $1->code;
@@ -419,27 +458,43 @@ statement: new_variable {
 }
         | BREAK SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string(":= end") + currentWhileLoop->endLabel->name + "\n";
+                node->code = std::string(":= ") + whileLoopStack.top()->endLabel->name + "\n";
+                whileLoopStack.pop();
                 $$ = node;
 }
         | CONTINUE SEMICOLON {
                 struct CodeNode *node = new CodeNode;
-                node->code = std::string(":= end") + currentWhileLoop->beginLabel->name + "\n";
+                node->code = std::string(":= end") + whileLoopStack.top()->beginLabel->name + "\n";
                 $$ = node;
 }
         ;
 
-if_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY else_statement {
+ifelse_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY ELSE LEFTCURLY statement RIGHTCURLY {
     struct CodeNode *node = new CodeNode;
-    struct CodeNode *if_label = create_label(); 
-    struct CodeNode *else_label = create_label();
+    struct IfElse *ifelse = create_ifelse();
 
-    node->code += $2->code;
-    node->code += std::string("?:= ") + if_label->name + ", " + $2->name + "\n";
+    node->code = $2->code;
+    node->code += std::string("?:= ") + ifelse->ifLabel->name + ", " + $2->name + "\n";
+    node->code += std::string(":= ") + ifelse->elseLabel->name + "\n";
+    node->code += std::string(": ") + ifelse->ifLabel->name + "\n";
     node->code += $4->code;
-    node->code += std::string(":") + if_label->name + "\n";
-    node->code += $6->code;
-    node->code += std::string(":") + else_label->name + "\n";
+    node->code += std::string(":= ") + ifelse->endifLabel->name + "\n";
+    node->code += std::string(": ") + ifelse->elseLabel->name + "\n";
+    node->code += $8->code;
+    node->code += std::string(": ") + ifelse->endifLabel->name + "\n";
+    $$ = node;
+}
+
+if_statement: IF boolean_expressions LEFTCURLY statements RIGHTCURLY {
+    struct CodeNode *node = new CodeNode;
+    struct IfElse *ifelse = create_ifelse();
+
+    node->code = $2->code;
+    node->code += std::string("?:= ") + ifelse->ifLabel->name + ", " + $2->name + "\n";
+    node->code += std::string(":= ") + ifelse->endifLabel->name + "\n";
+    node->code += std::string(": ") + ifelse->ifLabel->name + "\n";
+    node->code += $4->code;
+    node->code += std::string(": ") + ifelse->endifLabel->name + "\n";
     $$ = node;
 }
 
@@ -484,7 +539,7 @@ assign_statement: TOKEN_IDENTIFIER ASSIGN NUMBER SEMICOLON {
                 
                 struct CodeNode *node = new CodeNode;
                 node->code += $3->code;
-                node->code += "= " + std::string($1) + ", " + currentTemp->name + std::string("\n");
+                node->code += "= " + std::string($1) + ", " + $3->name + std::string("\n");
                 $$ = node;
 } 
         | TOKEN_IDENTIFIER LEFTBRACKET NUMBER RIGHTBRACKET ASSIGN NUMBER SEMICOLON {
@@ -537,38 +592,26 @@ return_statement: RETURN expressions SEMICOLON {
 }
         ;
 
-else_statement: ELSE LEFTCURLY statement RIGHTCURLY {
-                struct CodeNode *node = new CodeNode;
-                struct CodeNode *else_label = create_label();
-                node->code += ":=" + else_label->name + "\n"; 
-                node->code += $3->code; 
-                $$ = node;
-}
-             | %empty {
-                struct CodeNode *node = new CodeNode;
-                $$ = node;
-}
-             ;
-
-while_statement: WHILE boolean_expressions while_store LEFTCURLY statements RIGHTCURLY  {
+while_statement: WHILE boolean_expressions while_store LEFTCURLY statements RIGHTCURLY {
     struct CodeNode *node = new CodeNode;
-    node->code = ": " + currentWhileLoop->beginLabel->name + "\n";
+    node->code = ": " + whileLoopStack.top()->beginLabel->name + "\n";
     node->code += $2->code; 
-    node->code += "?:= " + currentWhileLoop->endLabel->name + ", " + $2->name + "\n";
+    node->code += "?:= " + whileLoopStack.top()->loopBodyLabel->name + ", " + $2->name + "\n";
+    node->code += ":= " + whileLoopStack.top()->endLabel->name + "\n";
+    node->code += ": " + whileLoopStack.top()->loopBodyLabel->name + "\n";
     node->code += $5->code; 
-    node->code += ":= " + currentWhileLoop->beginLabel->name + "\n";
-    node->code += ": " + currentWhileLoop->endLabel->name + "\n";
+    node->code += ":= " + whileLoopStack.top()->beginLabel->name + "\n";
+    node->code += ": " + whileLoopStack.top()->endLabel->name + "\n";
+    
     $$ = node;
+    whileLoopStack.pop();
 }
         ;
 
+// needed to avoid a seg fault error with global variable access
 while_store : %empty {
-    struct WhileLoop *loop = new WhileLoop;
-    struct CodeNode *begin_loop_label = create_label();
-    struct CodeNode *end_loop_label = create_label();
-    loop->beginLabel = begin_loop_label;
-    loop->endLabel = end_loop_label;
-    currentWhileLoop = loop;
+    struct WhileLoop *loop = create_while_loop();
+    whileLoopStack.push(loop);
 }
  
         
@@ -607,10 +650,10 @@ boolean_expressions: expression GREATER expression {
                    | expression LESSEQUAL expression {
 		struct CodeNode *node = new CodeNode;
 		struct CodeNode *temp = create_temporary_variable();
-		node->code += temp->code;
+		node->code = temp->code;
                 node->code += $1->code;
                 node->code += $3->code + "\n";
-                node->code = std::string("<= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
+                node->code += std::string("<= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
 
                 node->name = temp->name;
                 $$ = node;		
@@ -618,10 +661,10 @@ boolean_expressions: expression GREATER expression {
                    | expression GREATEREQUAL expression {
 		struct CodeNode *node = new CodeNode;
 		struct CodeNode *temp = create_temporary_variable();
-		node->code += temp->code;
+		node->code = temp->code;
                 node->code += $1->code;
                 node->code += $3->code + "\n";
-                node->code = std::string(">= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
+                node->code += std::string(">= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
 
                 node->name = temp->name;
                 $$ = node;		
@@ -629,10 +672,10 @@ boolean_expressions: expression GREATER expression {
                    | expression EQUALITY expression {
 		struct CodeNode *node = new CodeNode;
 		struct CodeNode *temp = create_temporary_variable();
-		node->code += temp->code;
+		node->code = temp->code;
                 node->code += $1->code;
                 node->code += $3->code + "\n";
-                node->code = std::string("= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
+                node->code += std::string("= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
 
                 node->name = temp->name;
                 $$ = node;		
@@ -640,10 +683,10 @@ boolean_expressions: expression GREATER expression {
                    | expression NOTEQUAL expression {
 		struct CodeNode *node = new CodeNode;
 		struct CodeNode *temp = create_temporary_variable();
-		node->code += temp->code;
+		node->code = temp->code;
                 node->code += $1->code;
                 node->code += $3->code + "\n";
-                node->code = std::string("!= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
+                node->code += std::string("!= ") + temp->name + std::string(", ") + $1->name + std::string(", ") + $3->name + "\n";
 
                 node->name = temp->name;
                 $$ = node;		
@@ -712,7 +755,7 @@ type: INT {
 print: PRINT LEFTPAREN variable RIGHTPAREN SEMICOLON {
                 struct CodeNode *node = new CodeNode;
                 node->code = $3->code;
-                node->code += ".> " + currentTemp->name + std::string("\n");
+                node->code += ".> " + std::string($3->name) + std::string("\n");
                 $$ = node;
 }
             ;

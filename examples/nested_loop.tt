@@ -1,10 +1,12 @@
 chirp main() {
     egg i;
     egg j;
+
     i = 0;
     nest i < 2 {
-        j = 0;
-        nest j < 3 {
+
+        j = 1;
+        nest j <= 3 {
             squawk(j);
             j = j + 1;
         }

@@ -1,0 +1,16 @@
+func main
+. i
+= i, 0
+: __beginloop0__
+. __temp0__
+< __temp0__, i, 10
+?:= __loopbody0__, __temp0__
+:= __endloop0__
+: __loopbody0__
+.> i
+. __temp1__
++ __temp1__, i, 1
+= i, __temp1__
+:= __beginloop0__
+: __endloop0__
+endfunc
