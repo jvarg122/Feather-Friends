@@ -6,7 +6,7 @@ Feather Friends is a complete compiler for a custom "bird-based" programming lan
 source code and in stages, lexes it, parses it, checks it for semantic errors, and generates
 executable intermediate representation (IR) code that runs on an interpreter.
 
-![image](https://github.com/CitrusHappy/cs-152-feather-friends/assets/36286623/56bd944e-af45-489b-b8ec-4aab9d760445)
+![image](https://i.imgur.com/YFt9L2l.png)
 
 ## Project Overview
 
